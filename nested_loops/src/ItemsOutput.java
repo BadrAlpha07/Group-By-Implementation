@@ -12,7 +12,8 @@ public class ItemsOutput {
 	
 	public final static int MAX_ITEM = 5;
 	private Hashtable<String, Integer> itemsOutput= new Hashtable<String, Integer>();
-	private OutputFile overflow = new OutputFile("/Users/nadirabdou/eclipse-workspace/Nested_loop/group-by/nested_loops/src/overflow.txt");
+	private String fileNameOutput = "/Users/nadirabdou/eclipse-workspace/Nested_loop/group-by/nested_loops/src/overflow.txt";
+	private OutputFile overflow = new OutputFile(fileNameOutput);
 	private  OutputFile output = null;
 	private InputFile input = null ; 
 	private int positionGroup ;
@@ -31,6 +32,7 @@ public class ItemsOutput {
 	public boolean addItem() {
 		//Check if the key is already in hshtable, is it's the case we update his value, else we put the new value to th hashtabe
 		String line = input.readLine();
+		String fileNameInput = input.getFileName();
 		//We check that we have items in input file
 		if (line != null) {
 			//get line by column and choose the column we want
@@ -57,9 +59,9 @@ public class ItemsOutput {
 			itemsOutput.clear();
 			//If the overflow is empty then we finish else we change the input by the overflow
 			overflow.closeFile();
-			File over = new File("/Users/nadirabdou/eclipse-workspace/Nested_loop/group-by/nested_loops/src/overflow.txt");
+			File over = new File(fileNameOutput);
 			//NB: Je dois essayer récupérer le nom à partir du buffer input 
-			File inp = new File("/Users/nadirabdou/eclipse-workspace/Nested_loop/group-by/nested_loops/src/input.txt");
+			File inp = new File(fileNameInput);
 			if(over.length() == 0) {
 				//We finish 		
 				return false;
@@ -69,17 +71,17 @@ public class ItemsOutput {
 
 				inp.delete();
 				//rename overflow file in input file 
-				over.renameTo(new File("/Users/nadirabdou/eclipse-workspace/Nested_loop/group-by/nested_loops/src/input.txt"));
+
+				over.renameTo(new File(fileNameInput));
 				//create a new InputFile 
 				//NB: Je pense que ça marche pas ça, car si on crée un truc il va pas étre mis à jour une fois qu'on sort de la fonction 
-				String fileNameInput = input.getFileName();
 				overflow.closeFile();
 
 				//Faut peut être faire ça dans le main 
 				input = new InputFile(fileNameInput);
 				
 				//create a new overflow
-				overflow = new OutputFile("/Users/nadirabdou/eclipse-workspace/Nested_loop/group-by/nested_loops/src/overflow.txt");
+				overflow = new OutputFile(fileNameOutput);
 
 				return true;
 			}
