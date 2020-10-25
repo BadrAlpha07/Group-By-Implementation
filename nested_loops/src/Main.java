@@ -38,5 +38,6 @@ public class Main {
 	    System.out.println("Fin procédure");
 	    output.closeFile();
 		input.closeFile();
+		File f = new File("Moooh");
 	}
 }
