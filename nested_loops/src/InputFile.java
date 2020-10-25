@@ -9,14 +9,7 @@ public class InputFile {
 	//Constructeur 
 	public InputFile(String file_name) {
 		try {
-			reader = new BufferedReader(new FileReader(file_name));
-			String line = reader.readLine();
-			while (line != null) {
-				System.out.println(line);
-				// read next line
-				line = reader.readLine();
-			}
-			reader.close();
+			reader = new BufferedReader(new FileReader(file_name));			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
