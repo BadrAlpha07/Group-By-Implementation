@@ -24,12 +24,12 @@ public class Main {
             String fileName = chooser.getSelectedFile().getAbsolutePath();
             
             InputFile input = new InputFile(fileName);
-    		OutputFile output = new OutputFile("./data/output.txt");
+    		OutputFile output = new OutputFile("./data/output.csv");
             
             String line = input.readLine();
     		//Here we print the first row to see our column
     	    System.out.println(line);
-    		String[] split_line = line.split(",");
+    		String[] split_line = line.split(";");
     		int max_position = split_line.length ;
     	    int position = -1;
      

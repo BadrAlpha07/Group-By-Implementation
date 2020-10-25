@@ -10,10 +10,10 @@ import java.io.OutputStreamWriter;
 
 public class ItemsOutput {
 	
-	public final static int MAX_ITEM = 2;
+	public final static int MAX_ITEM = 10;
 	private Hashtable<String, Integer> outputTable= new Hashtable<String, Integer>();
-	private String fileNameOverflow = "./data/overflow.txt";
-	private String fileNameTemporary = "./data/temporary.txt";
+	private String fileNameOverflow = "./data/overflow.csv";
+	private String fileNameTemporary = "./data/temporary.csv";
 	
 	private OutputFile overflowFile = new OutputFile(fileNameOverflow);
 	private  OutputFile outputFile = null;
@@ -39,7 +39,7 @@ public class ItemsOutput {
 		//We check that we have items in input file
 		if (line != null) {
 			//get line by column and choose the column we want
-			String[]line_split = line.split(",");
+			String[]line_split = line.split(";");
 			if (outputTable.containsKey(line_split[positionGroup])) {
 				outputTable.put(line_split[positionGroup], outputTable.get(line_split[positionGroup]) + 1);
 			}
@@ -120,7 +120,7 @@ public class ItemsOutput {
 		while(itr.hasNext()) {   
 		    entry = itr.next();	    
 		    System.out.println("Writing in output");
-		    String line = entry.getKey()+','+entry.getValue();
+		    String line = entry.getKey()+ " ;" +entry.getValue();
 		    outputFile.writeLine(line);
 
 		}
