@@ -1,7 +1,13 @@
+import java.util.Scanner;
 
 public class Main {
 	public static void main(String args[]) {
-		System.out.println("Hello word");
+		Scanner myObj = new Scanner(System.in);  // Create a Scanner object
+	    System.out.println("Enter username");
+
+	    String userName = myObj.nextLine();  // Read user input
+	    int position = Integer.parseInt(userName);
+	    System.out.println("Position is: " + position);  // Output user input
 		
 	}
 }
