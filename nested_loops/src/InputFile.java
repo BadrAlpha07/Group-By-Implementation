@@ -6,6 +6,7 @@ import java.io.IOException;
 public class InputFile {
 	private BufferedReader reader = null;
 	private String fileName = null;
+	
 	//Constructeur 
 	public InputFile(String fileName) {
 		try {

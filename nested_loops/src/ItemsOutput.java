@@ -10,44 +10,47 @@ import java.io.OutputStreamWriter;
 
 public class ItemsOutput {
 	
-	public final static int MAX_ITEM = 5;
-	private Hashtable<String, Integer> itemsOutput= new Hashtable<String, Integer>();
-	private String fileNameOutput = "/Users/nadirabdou/eclipse-workspace/Nested_loop/group-by/nested_loops/src/overflow.txt";
-	private OutputFile overflow = new OutputFile(fileNameOutput);
-	private  OutputFile output = null;
-	private InputFile input = null ; 
-	private int positionGroup ;
+	public final static int MAX_ITEM = 2;
+	private Hashtable<String, Integer> outputTable= new Hashtable<String, Integer>();
+	private String fileNameOverflow = "./data/overflow.txt";
+	private String fileNameTemporary = "./data/temporary.txt";
 	
-	//Constructeur 
+	private OutputFile overflowFile = new OutputFile(fileNameOverflow);
+	private  OutputFile outputFile = null;
+	private InputFile inputFile = null ; 
+	private int positionGroup ;
+	private boolean isTemporaryInput = false;
+	
+	//Constructor 
 	public ItemsOutput (InputFile input,OutputFile output, int position) {
-		this.output = output ;
-		this.input = input ; 
-		positionGroup = position ;
+		this.outputFile = output ;
+		this.inputFile = input ; 
+		this.positionGroup = position ;
 	}
 	
 	
-	//Add item in the hastable
+	//Add item in the hashtable
 	//return true if we are already reading the input file or the overflow is not empty
 	//return false if we are at the end of the input file and the overflow is empty
 	public boolean addItem() {
-		//Check if the key is already in hshtable, is it's the case we update his value, else we put the new value to th hashtabe
-		String line = input.readLine();
-		String fileNameInput = input.getFileName();
+		//Check if the key is already in hashtable, is it's the case we update his value, else we put the new value to the hashtable
+		String line = inputFile.readLine();
+		String fileNameInput = inputFile.getFileName();
 		//We check that we have items in input file
 		if (line != null) {
 			//get line by column and choose the column we want
 			String[]line_split = line.split(",");
-			if (itemsOutput.containsKey(line_split[positionGroup])) {
-				itemsOutput.put(line_split[positionGroup],itemsOutput.get(line_split[positionGroup])+1);
+			if (outputTable.containsKey(line_split[positionGroup])) {
+				outputTable.put(line_split[positionGroup], outputTable.get(line_split[positionGroup]) + 1);
 			}
 			
 			else {
 				//We check if there is place in memory, if it's not the case we write the information in overflow
-				if (itemsOutput.size()<MAX_ITEM) {
-					itemsOutput.put(line_split[positionGroup],1);
+				if (outputTable.size() < MAX_ITEM) {
+					outputTable.put(line_split[positionGroup],1);
 				}
 				else {
-					overflow.writeLine(line);			
+					overflowFile.writeLine(line);
 				}
 			}
 			return true;		
@@ -55,33 +58,35 @@ public class ItemsOutput {
 		else {
 			//We write the hashtable in output and clean it 
 		    System.out.println("Writing in output");
-			writeHashTableInOutput();
-			itemsOutput.clear();
-			//If the overflow is empty then we finish else we change the input by the overflow
-			overflow.closeFile();
-			File over = new File(fileNameOutput);
-			//NB: Je dois essayer récupérer le nom à partir du buffer input 
-			File inp = new File(fileNameInput);
+			this.writeHashTableInOutput();
+			this.outputTable.clear();
+			
+			// If the overflow is empty then we finish else we change the input by the overflow
+			// We close the overflow file to make it save its modifications
+			this.overflowFile.closeFile();
+			File over = new File(fileNameOverflow);
+			
 			if(over.length() == 0) {
-				//We finish 		
+				// Delete the overflow file
+				over.delete();
+				//We finish		
 				return false;
 			}
 			else {
-				//delet the old input file
-
-				inp.delete();
-				//rename overflow file in input file 
-
-				over.renameTo(new File(fileNameInput));
-				//create a new InputFile 
-				//NB: Je pense que ça marche pas ça, car si on crée un truc il va pas étre mis à jour une fois qu'on sort de la fonction 
-				overflow.closeFile();
-
-				//Faut peut être faire ça dans le main 
-				input = new InputFile(fileNameInput);
+				//delete the old input file
+				this.inputFile.closeFile();
+				if(this.isTemporaryInput) {
+				this.deleteTemporaryFile();
+				}
 				
-				//create a new overflow
-				overflow = new OutputFile(fileNameOutput);
+				//rename overflow file in input file and save modifications
+				over.renameTo(new File(this.fileNameTemporary));
+				this.overflowFile.closeFile();
+
+				// update the inputFile attribute and reset the overflow file
+				this.isTemporaryInput = true;
+				this.inputFile = new InputFile(this.fileNameTemporary);
+				this.overflowFile = new OutputFile(this.fileNameOverflow);
 
 				return true;
 			}
@@ -91,22 +96,32 @@ public class ItemsOutput {
 	
 	//Return the hashTable
 	public Hashtable<String, Integer> getItemsOutput() {
-		return itemsOutput;
+		return this.outputTable;
 	}
 	
 	public Enumeration<String> getKeys() {
-		return itemsOutput.keys();
+		return this.outputTable.keys();
+	}
+	
+	public boolean getIsTemporaryInput() {
+		return this.isTemporaryInput;
+	}
+	
+	public void deleteTemporaryFile() {
+		this.inputFile.closeFile();
+		File inp = new File(this.fileNameTemporary);
+		inp.delete();
 	}
 	
 	public void writeHashTableInOutput() {
-		Iterator<Entry<String, Integer>> itr = itemsOutput.entrySet().iterator();
+		Iterator<Entry<String, Integer>> itr = outputTable.entrySet().iterator();
 		 
 		Map.Entry<String, Integer> entry = null;
 		while(itr.hasNext()) {   
 		    entry = itr.next();	    
 		    System.out.println("Writing in output");
 		    String line = entry.getKey()+','+entry.getValue();
-		    output.writeLine(line);
+		    outputFile.writeLine(line);
 
 		}
 	}
