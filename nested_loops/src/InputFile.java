@@ -5,14 +5,15 @@ import java.io.IOException;
  
 public class InputFile {
 	private BufferedReader reader = null;
-	
+	private String fileName = null;
 	//Constructeur 
-	public InputFile(String file_name) {
+	public InputFile(String fileName) {
 		try {
-			reader = new BufferedReader(new FileReader(file_name));			
+			reader = new BufferedReader(new FileReader(fileName));			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		this.fileName = fileName;
 	}
 	
 	//Return the BufferReader 
@@ -20,11 +21,15 @@ public class InputFile {
 		return reader ;
 	}
 	
+	//return the name of the file 
+	public String getFileName() {
+		return fileName;
+	}
+	
 	//Return one line from the file
 	public String readLine() {
-		BufferedReader reader_ = getReader();
 		try {	
-			String line = reader_.readLine();
+			String line = reader.readLine();
 			if(line != null) {
 				return line; 
 			}
@@ -37,9 +42,8 @@ public class InputFile {
 	
 	//Fermer le fichier 
 	public void closeFile() {
-		BufferedReader reader_ = getReader();
 		try {
-			reader_.close();
+			reader.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

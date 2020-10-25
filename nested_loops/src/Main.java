@@ -10,6 +10,7 @@ public class Main {
 	public static void main(String args[]) {
 		
 		InputFile input = new InputFile("/Users/nadirabdou/eclipse-workspace/Nested_loop/group-by/nested_loops/src/input.txt");
+		OutputFile output = new OutputFile("/Users/nadirabdou/eclipse-workspace/Nested_loop/group-by/nested_loops/src/output.txt");
 		
 		String line = input.readLine();
 		//Here we print the firt row to see our column
@@ -27,15 +28,15 @@ public class Main {
 		    position = Integer.parseInt(userName);
 		    
 	    }
-	    ItemsOutput items = new ItemsOutput(input,position);
+	    ItemsOutput items = new ItemsOutput(input,output,position);
 	    
-	    int check = 0;
-	    while (check != -1) {
+	    boolean check = true;
+	    while (check) {
 	    	check = items.addItem();
 	    }
 	    
 	    System.out.println("Fin procédure");
-	
+	    output.closeFile();
 		input.closeFile();
 	}
 }
