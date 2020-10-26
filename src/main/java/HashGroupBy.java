@@ -7,13 +7,21 @@ import java.util.HashMap;
 public class HashGroupBy implements GroupBy{
 
     private final int in_group;
-    private HashMap<Integer,Record> map;
+    private final int in_agg;
+    private final int out_group;
+    private final int out_agg;
+    //private HashMap<Integer,Record> map;
+    private CustomHashMap map;
     private Aggregation agg;
 
-    HashGroupBy(int group_field, CountAggregation agg)
+    HashGroupBy(int in_group, int in_agg, int out_group, int out_agg, Aggregation agg)
     {
-        this.map = new HashMap<Integer, Record>();
-        this.in_group = group_field;
+        //this.map = new HashMap<Integer, Record>();
+        this.map = new CustomHashMap(0.7f);
+        this.in_group = in_group;
+        this.in_agg = in_agg;
+        this.out_agg = out_agg;
+        this.out_group = out_group;
         this.agg = agg;
     }
 
@@ -23,14 +31,15 @@ public class HashGroupBy implements GroupBy{
             var group = t.get(in_group);
             var group_val = map.get(group);
             if(group_val == null) {
-                map.put(group, agg.initialize(t));
+                map.put(group, agg.initialize(t, in_group, in_agg, out_group, out_agg));
                 output_length += 1;
             } else {
-                map.put(group, agg.merge(t, group_val));
+                map.put(group, agg.merge(t, group_val,
+                        in_group, in_agg, out_group, out_agg));
             }
         }
 
-        return map.values().toArray(new Record[0]);
+        return map.values();
     }
 
     public void set_aggregation(Aggregation agg) {

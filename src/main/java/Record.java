@@ -28,4 +28,7 @@ public class Record {
     public void set(int i, Integer v) {
         this.data[i] = v;
     }
+    public Record copy(){
+        return new Record(this.data);
+    }
 }
