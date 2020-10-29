@@ -7,7 +7,7 @@ public class InputFile {
 	private BufferedReader reader = null;
 	private String fileName = null;
 	
-	//Constructeur 
+	//Constructor 
 	public InputFile(String fileName) {
 		try {
 			reader = new BufferedReader(new FileReader(fileName));			
@@ -17,12 +17,12 @@ public class InputFile {
 		this.fileName = fileName;
 	}
 	
-	//Return the BufferReader 
+	//Return the BufferedReader 
 	public BufferedReader getReader () {
 		return reader ;
 	}
 	
-	//return the name of the file 
+	//Return the name of the file 
 	public String getFileName() {
 		return fileName;
 	}
@@ -41,7 +41,7 @@ public class InputFile {
 		return null; 
 	}
 	
-	//Fermer le fichier 
+	//Close the BufferedReader
 	public void closeFile() {
 		try {
 			reader.close();

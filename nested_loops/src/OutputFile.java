@@ -9,7 +9,7 @@ public class OutputFile {
 	private BufferedWriter writer = null;
 	private String fileName = null;
 	
-	//Constructeur 
+	//Constructor 
 	public OutputFile(String fileName) {
 		try {
 			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(fileName))));
@@ -19,7 +19,7 @@ public class OutputFile {
 		this.fileName = fileName;
 	}
 	
-	//Return the BufferReader 
+	//Return the BufferedReader 
 	public BufferedWriter getReader () {
 		return writer ;
 	}
@@ -43,7 +43,7 @@ public class OutputFile {
 		 
 	}
 	
-	//Fermer le fichier 
+	//Close the BufferedReader 
 	public void closeFile() {
 		try {
 			writer.close();

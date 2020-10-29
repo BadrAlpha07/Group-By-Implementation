@@ -1,11 +1,5 @@
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.Scanner;
-
 import javax.swing.JFileChooser;
 
 public class Main {
@@ -29,18 +23,18 @@ public class Main {
             String line = input.readLine();
     		//Here we print the first row to see our column
     	    System.out.println(line);
-    		String[] split_line = line.split(";");
-    		int max_position = split_line.length ;
+    		String[] splittedLine = line.split(";");
+    		int maxPosition = splittedLine.length ;
     	    int position = -1;
      
     		
-    	    //We want to get the position of the column that we want 
-    	    while(position<0 || position >= max_position) {
-    	    	Scanner myObj = new Scanner(System.in);  // Create a Scanner object
-    		    System.out.println("Enter the position of the column we want to group by");
-    		    String userName = myObj.nextLine();  // Read user input
-    		    position = Integer.parseInt(userName);
-    		    
+    	    //Ask the user the position of the column he wants to group by
+    	    while(position<0 || position >= maxPosition) {
+    	    	Scanner scanner = new Scanner(System.in);  // Create a Scanner object
+    		    System.out.println("Enter the position of the column you want to group by:");
+    		    String positionString = scanner.nextLine();  // Read user input
+    		    position = Integer.parseInt(positionString);
+    		    scanner.close();
     	    }
     	    ItemsOutput items = new ItemsOutput(input, output, position);
     	    
@@ -49,7 +43,7 @@ public class Main {
     	    	check = items.addItem();
     	    }
     	    
-    	    System.out.println("Fin procedure");
+    	    System.out.println("Processing finished");
     	    output.closeFile();
     	    input.closeFile();
     	    
