@@ -1,5 +1,5 @@
 # Group-By Project
-For everyone : chose a way to read to read a csv and everyone sticks to it so we can all compare performances.
+For everyone : chose a way to read a csv and everybody sticks to it so we can all compare performances.
 
 ## Nested Loops
 ## Sorting
