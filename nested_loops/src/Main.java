@@ -5,6 +5,9 @@ import javax.swing.JFileChooser;
 public class Main {
 	public static void main(String args[]) {
 		
+		int nbProcessors = Runtime.getRuntime().availableProcessors();
+		System.out.println("Number of processors available: " + Integer.toString(nbProcessors));
+        
 		JFileChooser chooser = new JFileChooser();
 		File workingDirectory = new File(System.getProperty("user.dir"));
 		chooser.setCurrentDirectory(workingDirectory);
@@ -25,32 +28,34 @@ public class Main {
     	    System.out.println(line);
     		String[] splittedLine = line.split(";");
     		int maxPosition = splittedLine.length ;
-    	    int position = -1;
+    	    int positionGroup = -1;
      
     		
-    	    //Ask the user the position of the column he wants to group by
-    	    while(position<0 || position >= maxPosition) {
+    	    //Ask the user the positionGroup of the column he wants to group by
+    	    while(positionGroup<0 || positionGroup >= maxPosition) {
     	    	Scanner scanner = new Scanner(System.in);  // Create a Scanner object
-    		    System.out.println("Enter the position of the column you want to group by:");
+    		    System.out.println("Enter the positionGroup of the column you want to group by:");
     		    String positionString = scanner.nextLine();  // Read user input
-    		    position = Integer.parseInt(positionString);
+    		    positionGroup = Integer.parseInt(positionString);
     		    scanner.close();
     	    }
-    	    ItemsOutput items = new ItemsOutput(input, output, position);
     	    
-    	    boolean check = true;
-    	    while (check) {
-    	    	check = items.addItem();
-    	    }
+    	    //Measure the execution time
+    	    long t1 = System.nanoTime();
     	    
-    	    System.out.println("Processing finished");
+    	    NestedLoopsSingleThread nestedLoops = new NestedLoopsSingleThread(input, output, positionGroup);
+    	    nestedLoops.start();
+    	    
+//    	    int nbThreads = 1;
+//    	    NestedLoopsMultiThread nestedLoops = new NestedLoopsMultiThread(input, output, positionGroup, nbThreads);
+//    	    nestedLoops.start();
+    	    
+            long t2 = System.nanoTime();
+            long timing = (t2-t1)/(1000000*10);
+            System.out.format("Processing time: %d ms\n", timing);
+    	    
     	    output.closeFile();
     	    input.closeFile();
-    	    
-    	    if(items.getIsTemporaryInput()) {
-    	    	items.deleteTemporaryFile();
-    	    }
-
         }		
 	}
 }
