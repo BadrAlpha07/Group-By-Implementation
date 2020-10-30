@@ -1,14 +1,15 @@
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
  
-public class InputFile {
+public class ReaderFile {
 	private BufferedReader reader = null;
 	private String fileName = null;
 	
 	//Constructor 
-	public InputFile(String fileName) {
+	public ReaderFile(String fileName) {
 		try {				
 			reader = new BufferedReader(new FileReader(fileName));	
 			
@@ -65,6 +66,12 @@ public class InputFile {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void deleteFile() {
+		this.closeFile();
+		File file = new File(this.fileName);
+		file.delete();
 	}
 	
 }

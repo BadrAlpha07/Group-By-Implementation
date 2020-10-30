@@ -5,17 +5,17 @@ import java.io.File;
 	
 public class NestedLoopsSingleThread implements Runnable {
 
-	//Hashtable simulating the memory, with a maximum size of MAX_ITEM
-	public final static int MAX_ITEM = 100;
+	//Hashtable simulating the memory, with a maximum size of MEMORY_SIZE
 	private Hashtable<String, Integer> outputTable = new Hashtable<String, Integer>();
 	
 	private String fileNameTemporary = "";
 	private String fileNameOverflow = "";
+	private int threadNumber = 0;
 	
 	//Overflow file stores items that do not fit in memory
-	private OutputFile overflowFile = null;
-	private OutputFile outputFile = null;
-	private InputFile inputFile = null;
+	private WriterFile overflowFile = null;
+	private WriterFile outputFile = null;
+	private ReaderFile inputFile = null;
 	
 	private int positionGroup; //position of the column to group by
 	private boolean isTemporaryInput = false;
@@ -24,12 +24,19 @@ public class NestedLoopsSingleThread implements Runnable {
 	//Constructor 
 	public NestedLoopsSingleThread(String beginInputName, int threadNumber, int position) {
 		this.positionGroup = position ;
-		this.fileNameOverflow = "./data/overflow" + Integer.toString(threadNumber) + ".csv";
-		this.fileNameTemporary = "./data/temporary" + Integer.toString(threadNumber) + ".csv";
+		this.threadNumber = threadNumber;
+		this.fileNameOverflow = Main.TMP_PATH + "overflow" + Integer.toString(threadNumber) + Main.FILE_TYPE;
+		this.fileNameTemporary = Main.TMP_PATH + "temporary" + Integer.toString(threadNumber) + Main.FILE_TYPE;
 		
-		this.outputFile = new OutputFile("./data/output" + Integer.toString(threadNumber) + ".csv");
-		this.inputFile = new InputFile(beginInputName + Integer.toString(threadNumber) + ".csv");
-		this.overflowFile = new OutputFile(fileNameOverflow);
+		if(threadNumber == 0) {
+			this.outputFile = new WriterFile(Main.TMP_PATH + "output" + Main.FILE_TYPE);
+			this.inputFile = new ReaderFile(beginInputName);
+		} else {
+			this.outputFile = new WriterFile(Main.TMP_PATH + "output" + Integer.toString(threadNumber) + Main.FILE_TYPE);
+			this.inputFile = new ReaderFile(beginInputName + Integer.toString(threadNumber) + Main.FILE_TYPE);
+		}
+		
+		this.overflowFile = new WriterFile(fileNameOverflow);
 	}
 	
 	public void run() {
@@ -62,12 +69,20 @@ public class NestedLoopsSingleThread implements Runnable {
 			//Get line by column and choose the column we want
 			String[] lineSplitted = line.split(";");
 			if (outputTable.containsKey(lineSplitted[positionGroup])) {
-				outputTable.put(lineSplitted[positionGroup], outputTable.get(lineSplitted[positionGroup]) + 1);
+				if(threadNumber == 0) {
+					outputTable.put(lineSplitted[positionGroup], outputTable.get(lineSplitted[positionGroup]) + Integer.parseInt(lineSplitted[positionGroup + 1]));
+				} else {
+					outputTable.put(lineSplitted[positionGroup], outputTable.get(lineSplitted[positionGroup]) + 1);
+				}
 			}
 			else {
 				//We check if there is place in memory, if not we write the information in the overflow file
-				if (outputTable.size() < MAX_ITEM) {
-					outputTable.put(lineSplitted[positionGroup], 1);
+				if (outputTable.size() < Main.MEMORY_SIZE) {
+					if(threadNumber == 0) {
+						outputTable.put(lineSplitted[positionGroup], Integer.parseInt(lineSplitted[positionGroup + 1]));
+					} else {
+						outputTable.put(lineSplitted[positionGroup], 1);
+					}
 				}
 				else {
 					overflowFile.writeLine(line);
@@ -105,8 +120,8 @@ public class NestedLoopsSingleThread implements Runnable {
 				
 				//Update the inputFile attribute and reset the overflow file
 				this.isTemporaryInput = true;
-				this.inputFile = new InputFile(this.fileNameTemporary);
-				this.overflowFile = new OutputFile(this.fileNameOverflow);
+				this.inputFile = new ReaderFile(this.fileNameTemporary);
+				this.overflowFile = new WriterFile(this.fileNameOverflow);
 	
 				return true;
 			}
@@ -128,9 +143,7 @@ public class NestedLoopsSingleThread implements Runnable {
 	}
 	
 	public void deleteTemporaryFile() {
-		this.inputFile.closeFile();
-		File inp = new File(this.fileNameTemporary);
-		inp.delete();
+		this.inputFile.deleteFile();
 	}
 	
 	public void writeHashTableInOutput() {

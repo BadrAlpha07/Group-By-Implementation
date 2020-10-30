@@ -4,13 +4,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-public class OutputFile {
+public class WriterFile {
 	
 	private BufferedWriter writer = null;
 	private String fileName = null;
 	
-	//Constructor 
-	public OutputFile(String fileName) {
+	//Constructor
+	public WriterFile(String fileName) {
 		try {
 			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(fileName))));
 		} catch (IOException e) {
@@ -20,7 +20,7 @@ public class OutputFile {
 	}
 	
 	//Return the BufferedReader 
-	public BufferedWriter getReader () {
+	public BufferedWriter getReader() {
 		return writer ;
 	}
 	

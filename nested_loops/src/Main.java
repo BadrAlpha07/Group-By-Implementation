@@ -3,6 +3,11 @@ import java.util.Scanner;
 import javax.swing.JFileChooser;
 
 public class Main {
+	
+	public static final int MEMORY_SIZE = 1000;
+	public static final String TMP_PATH = "./tmp/";
+	public static final String FILE_TYPE = ".csv";
+	
 	public static void main(String args[]) {
 		
 		int nbProcessors = Runtime.getRuntime().availableProcessors();
@@ -19,8 +24,10 @@ public class Main {
             }
 
             String inputName = chooser.getSelectedFile().getAbsolutePath();
+            File temp = new File(TMP_PATH);
+    		temp.mkdirs();
             
-            InputFile input = new InputFile(inputName);
+            ReaderFile input = new ReaderFile(inputName);
             
             String line = input.readLine();
     		//Here we print the first row to see our column

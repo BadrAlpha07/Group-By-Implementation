@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.ArrayList;
 
 public class NestedLoopsMultiThread {
@@ -5,14 +6,13 @@ public class NestedLoopsMultiThread {
 	private int positionGroup;
 	private int nbThreads;
 	
-	//private OutputFile output = null;
+	private WriterFile tempOutput = null;
 	private String inputName = "";
-	//private final Thread[] threads;
 	
 	public NestedLoopsMultiThread(String inputName, int positionGroup, int nbThreads) {
 		this.positionGroup = positionGroup;
 		this.nbThreads = nbThreads;
-		//this.output = output;
+		this.tempOutput = new WriterFile(Main.TMP_PATH + "temporaryOutput" + Main.FILE_TYPE);
 		this.inputName = inputName;
 	}
 	
@@ -23,7 +23,7 @@ public class NestedLoopsMultiThread {
 		
 		ArrayList<Thread> threads = new ArrayList<>();
 		
-        for(int i = 0; i < nbThreads; ++i) {
+        for(int i = 1; i <= nbThreads; i++) {
         	NestedLoopsSingleThread nestedLoops = new NestedLoopsSingleThread(beginInputName, i, positionGroup);
         	Thread thread = new Thread(nestedLoops);
             thread.start();
@@ -38,21 +38,40 @@ public class NestedLoopsMultiThread {
 				e.printStackTrace();
 			}
         }
+        
+        this.concatenateOutputs();
+        NestedLoopsSingleThread nestedLoops = new NestedLoopsSingleThread(tempOutput.getFileName(), 0, 0);
+        Thread thread = new Thread(nestedLoops);
+        thread.start();
+        
+        try {
+			thread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        for(int i = 1; i <= nbThreads; ++i) {
+        	File inp = new File(beginInputName + Integer.toString(i) + Main.FILE_TYPE);
+        	inp.delete();
+        }
+        
+        File tmpOut = new File(this.tempOutput.getFileName());
+        tmpOut.delete();
 	}
 	
 	public void splitInput() {
-		InputFile input = new InputFile(this.inputName);
+		ReaderFile input = new ReaderFile(this.inputName);
 		int recordsNumber = input.getRecordsNumber();
 		input.readLine();
 		String line = input.readLine();
-		System.out.println(inputName);
 		String nameBlockInput = this.inputName.substring(0, this.inputName.length() - 4);
 		int count = 0;
 		int numberRecordsBlock = recordsNumber / this.nbThreads;
 		
-		OutputFile[] blockInputs = new OutputFile[this.nbThreads];
-		for(int i=0; i < this.nbThreads; i++) {
-			blockInputs[i] = new OutputFile(nameBlockInput + Integer.toString(i) + ".csv");
+		WriterFile[] blockInputs = new WriterFile[this.nbThreads];
+		for(int i=1; i <= this.nbThreads; i++) {
+			blockInputs[i-1] = new WriterFile(nameBlockInput + Integer.toString(i) + Main.FILE_TYPE);
 		}
 		
 		while(line != null) {
@@ -66,11 +85,25 @@ public class NestedLoopsMultiThread {
 			line = input.readLine();
 		}
 		
-		for(int i=0; i < nbThreads; i++) {
-			blockInputs[i].closeFile();
+		for(int i=1; i <= nbThreads; i++) {
+			blockInputs[i-1].closeFile();
 		}
 		
 		input.closeFile();
+	}
+	
+	public void concatenateOutputs() {
+		for(int i=1; i <= this.nbThreads; i++) {
+			ReaderFile input = new ReaderFile(Main.TMP_PATH + "output" + Integer.toString(i) + Main.FILE_TYPE);
+			String line = input.readLine();
+			
+			while(line != null) {
+				tempOutput.writeLine(line);
+				line = input.readLine();
+			}
+			input.deleteFile();
+		}
+		tempOutput.closeFile();
 	}
 
 }
