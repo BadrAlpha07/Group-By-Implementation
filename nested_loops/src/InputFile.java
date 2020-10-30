@@ -9,8 +9,9 @@ public class InputFile {
 	
 	//Constructor 
 	public InputFile(String fileName) {
-		try {
-			reader = new BufferedReader(new FileReader(fileName));			
+		try {				
+			reader = new BufferedReader(new FileReader(fileName));	
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -25,6 +26,22 @@ public class InputFile {
 	//Return the name of the file 
 	public String getFileName() {
 		return fileName;
+	}
+	
+	public int getRecordsNumber() {
+		
+		int lines = 0;
+		
+		try {				
+			BufferedReader countReader = new BufferedReader(new FileReader(this.fileName));
+			while (countReader.readLine() != null) lines++;
+			countReader.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return lines;
 	}
 	
 	//Return one line from the file

@@ -18,44 +18,46 @@ public class Main {
                 return;
             }
 
-            String fileName = chooser.getSelectedFile().getAbsolutePath();
+            String inputName = chooser.getSelectedFile().getAbsolutePath();
             
-            InputFile input = new InputFile(fileName);
-    		OutputFile output = new OutputFile("./data/output.csv");
+            InputFile input = new InputFile(inputName);
             
             String line = input.readLine();
     		//Here we print the first row to see our column
     	    System.out.println(line);
     		String[] splittedLine = line.split(";");
     		int maxPosition = splittedLine.length ;
-    	    int positionGroup = -1;
+    	    input.closeFile();
      
-    		
+    	    Scanner sc = new Scanner(System.in);        
+    	    System.out.println("Enter the position of the column you want to group by:");
+    	    int positionGroup = sc.nextInt();
+    	    
     	    //Ask the user the positionGroup of the column he wants to group by
     	    while(positionGroup<0 || positionGroup >= maxPosition) {
-    	    	Scanner scanner = new Scanner(System.in);  // Create a Scanner object
-    		    System.out.println("Enter the positionGroup of the column you want to group by:");
-    		    String positionString = scanner.nextLine();  // Read user input
-    		    positionGroup = Integer.parseInt(positionString);
-    		    scanner.close();
+    	    	System.out.println("please try again!");
+    	        positionGroup = sc.nextInt();
     	    }
+    	    
+    	    System.out.println("Enter the number of threads you want:");
+    	    int nbThreads = sc.nextInt();
+    	    
+    	    while(nbThreads < 1) {
+    	    	System.out.println("please try again!");
+    	        nbThreads = sc.nextInt();
+    	    }
+    	    sc.close();
     	    
     	    //Measure the execution time
     	    long t1 = System.nanoTime();
     	    
-    	    NestedLoopsSingleThread nestedLoops = new NestedLoopsSingleThread(input, output, positionGroup);
-    	    nestedLoops.start();
-    	    
-//    	    int nbThreads = 1;
-//    	    NestedLoopsMultiThread nestedLoops = new NestedLoopsMultiThread(input, output, positionGroup, nbThreads);
-//    	    nestedLoops.start();
+    	    NestedLoopsMultiThread nestedLoops = new NestedLoopsMultiThread(inputName, positionGroup, nbThreads);
+    	    nestedLoops.apply();
     	    
             long t2 = System.nanoTime();
             long timing = (t2-t1)/(1000000*10);
             System.out.format("Processing time: %d ms\n", timing);
-    	    
-    	    output.closeFile();
-    	    input.closeFile();
+    	  
         }		
 	}
 }

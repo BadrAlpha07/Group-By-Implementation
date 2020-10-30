@@ -3,17 +3,17 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.io.File;
 	
-public class NestedLoopsSingleThread {
+public class NestedLoopsSingleThread implements Runnable {
 
 	//Hashtable simulating the memory, with a maximum size of MAX_ITEM
 	public final static int MAX_ITEM = 100;
 	private Hashtable<String, Integer> outputTable = new Hashtable<String, Integer>();
 	
-	private String fileNameOverflow = "./data/overflow.csv";
-	private String fileNameTemporary = "./data/temporary.csv";
+	private String fileNameTemporary = "";
+	private String fileNameOverflow = "";
 	
 	//Overflow file stores items that do not fit in memory
-	private OutputFile overflowFile = new OutputFile(fileNameOverflow);
+	private OutputFile overflowFile = null;
 	private OutputFile outputFile = null;
 	private InputFile inputFile = null;
 	
@@ -22,18 +22,25 @@ public class NestedLoopsSingleThread {
 	
 	
 	//Constructor 
-	public NestedLoopsSingleThread(InputFile input, OutputFile output, int position) {
-		this.outputFile = output ;
-		this.inputFile = input ; 
+	public NestedLoopsSingleThread(String beginInputName, int threadNumber, int position) {
 		this.positionGroup = position ;
+		this.fileNameOverflow = "./data/overflow" + Integer.toString(threadNumber) + ".csv";
+		this.fileNameTemporary = "./data/temporary" + Integer.toString(threadNumber) + ".csv";
+		
+		this.outputFile = new OutputFile("./data/output" + Integer.toString(threadNumber) + ".csv");
+		this.inputFile = new InputFile(beginInputName + Integer.toString(threadNumber) + ".csv");
+		this.overflowFile = new OutputFile(fileNameOverflow);
 	}
 	
-	public void start() {
+	public void run() {
 	    
 	    boolean check = true;
 	    while (check) {
-	    	check = this.addItem();
+	    	check = this.processInputItem();
 	    }
+	    
+	    this.outputFile.closeFile();
+	    this.inputFile.closeFile();
 	    
 	    if(this.getIsTemporaryInput()) {
 	    	this.deleteTemporaryFile();
@@ -44,7 +51,7 @@ public class NestedLoopsSingleThread {
 	//Add item in the Hashtable
 	//return true if we are already reading the input file or the overflow is not empty
 	//return false if we are at the end of the input file and the overflow is empty
-	public boolean addItem() {
+	public boolean processInputItem() {
 		//Check if the key is already in Hashtable.
 		//If it is the case we update the aggregation value,
 		//else we add the item as a new element in the Hashtable
