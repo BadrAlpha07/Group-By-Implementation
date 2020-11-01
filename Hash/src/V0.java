@@ -67,9 +67,10 @@ class Main{
 
         }
         Enumeration<String> keys = hm.keys();
+        System.out.println("Aggregation Results");
         for (String key:Collections.list(keys)){
             List<String> agg = Arrays.asList(key,Integer.toString(aggregateCount(hm.get(key))));
-            System.out.print(agg);
+            System.out.println(agg);
 
 
         }
