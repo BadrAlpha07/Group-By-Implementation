@@ -1,9 +1,11 @@
-public class SumAggregation implements Aggregation{
+import java.io.Serializable;
+
+public class SumAggregation implements Aggregation, Serializable {
 
 
     @Override
     public Record merge(Record input, Record group_val, int col_by, int agg_on) {
-        group_val.set(1, String.valueOf(Integer.parseInt(group_val.get(agg_on))+Integer.parseInt(input.get(agg_on))));
+        group_val.set(1, String.valueOf(Float.parseFloat(group_val.get(1))+Float.parseFloat(input.get(agg_on))));
         return group_val;
     }
 

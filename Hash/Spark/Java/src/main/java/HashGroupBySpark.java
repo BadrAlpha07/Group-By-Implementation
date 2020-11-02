@@ -10,16 +10,15 @@ import org.apache.spark.api.java.function.Function2;
 import java.util.*;
 
 
-public class Main {
+public class HashGroupBySpark {
 
     private static List<String> concat(List<String> array, String element){
         /* Just a small function to concatenate a String to an array of String and return the result
-
          */
-
         array.add(element);
         return array;
     }
+
     private static class Merge implements Function2<Record[], Record[], Record[]> {
 
 
@@ -34,23 +33,30 @@ public class Main {
 
     private static class HashPartition implements FlatMapFunction<Iterator<List<String>>,Record[]>
     {
+        private final Aggregation agg;
+        private final int by;
+        private final int agg_on;
+
+        HashPartition(Aggregation agg, int by, int agg_on){
+            this.agg = agg;
+            this.by = by;
+            this.agg_on = agg_on;
+        }
         public Iterator<Record[]> call(Iterator<List<String>> records_raw_it) {
         /*
         Takes a list of record and perform group-by on the partition
          */
-        List<List<String>> records_raw = IteratorUtils.toList(records_raw_it);
-        Record[] records = Record.fromArray(records_raw);
-        System.out.println("BEFORE");
-        for (Record record : records) {
-            System.out.println(Arrays.toString(record.data));
+            List<List<String>> records_raw = IteratorUtils.toList(records_raw_it);
+            Record[] records = Record.fromArray(records_raw);
+            System.out.println("BEFORE");
+            for (Record record : records) {
+                System.out.println(Arrays.toString(record.data));
+            }
+            HashGroupBy grp = new HashGroupBy(this.by, this.agg_on, this.agg);
+            Record[][] result = new Record[][]{grp.apply(records)};
+            return Arrays.stream(result).iterator();
+
         }
-
-        Aggregation agg = new CountAggregation();
-        HashGroupBy grp = new HashGroupBy(1, 3, agg);
-        Record[][] result = new Record[][]{grp.apply(records)};
-        return Arrays.stream(result).iterator();
-
-    }
 
 
     }
@@ -64,17 +70,29 @@ public class Main {
         conf.set("spark.testing.memory", "471859200");
         JavaSparkContext sc = new JavaSparkContext(conf);
 
-        // Spark read CSV and format it
-        JavaRDD<List<String>> file = sc.textFile("src/main/resources/data_test1.csv")
-            .map((line) -> new ArrayList<>(Arrays.asList(line.split(";"))))
-            .filter(line -> (line.size() > 1))
-            .filter(line -> !(line.get(0).equals("id")))
-            .map(line -> concat(line,Integer.toString(line.get(1).hashCode()%10)));
 
-        // We collect the result and try to group by
+
+        // Spark read CSV and format it
+        /*
+        CSV FORMAT
+        id;role;names;height
+        1;Student;Nora;56
+        ...
+         */
+
+        JavaRDD<List<String>> file = sc.textFile("src/main/resources/data_test1.csv")
+                .map((line) -> new ArrayList<>(Arrays.asList(line.split(";"))))
+                .filter(line -> (line.size() > 1))
+                .filter(line -> !(line.get(0).equals("id")))
+                .map(line -> concat(line,Integer.toString(line.get(1).hashCode()%10)));
+
+        // Make the group-by on every partition (mapPartitions) than merge everything (reduce)
         Record[] output;
-        output = file.mapPartitions(new HashPartition()).reduce(new Merge());
-        //Record[] output = hashPartition(aggregate);
+        Aggregation agg = new SumAggregation();
+        HashPartition grouBy = new HashPartition(agg,1,3);
+        output = file.mapPartitions(grouBy).reduce(new Merge());
+
+        //Print output
         for(Record record:output){
             System.out.println(Arrays.toString(record.data));
         }
