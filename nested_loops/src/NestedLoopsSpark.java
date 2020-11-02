@@ -7,6 +7,7 @@ import scala.Tuple2;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 // This class implements the Nested Loops algorithm with early aggregation for a Spark multithreaded architecture
 public class NestedLoopsSpark {
@@ -25,7 +26,12 @@ public class NestedLoopsSpark {
 		positionGroupStat = positionGroup;
 		this.nbThreads = nbThreads;
 		this.inputName = inputName;
-		output = new WriterFile(Main.TMP_PATH + "output" + Main.FILE_TYPE);
+		
+		String pattern = Pattern.quote(System.getProperty("file.separator"));
+    	String[] splittedFileName = inputName.split(pattern);
+    	String fileNameInput = splittedFileName[splittedFileName.length -1];
+		
+		output = new WriterFile(MainForTest.TMP_PATH + "output_" + fileNameInput.substring(0, fileNameInput.length() - 4) + MainForTest.FILE_TYPE);
 		
 		conf.setAppName("NestLoopsSpark").setMaster("local[*]");
 		sc = new JavaSparkContext(conf);

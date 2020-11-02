@@ -28,18 +28,18 @@ public class NestedLoopsSingleThread implements Runnable {
 	public NestedLoopsSingleThread(String beginInputName, int threadNumber, int position) {
 		this.positionGroup = position ;
 		this.threadNumber = threadNumber;
-		this.fileNameOverflow = Main.TMP_PATH + "overflow" + Integer.toString(threadNumber) + Main.FILE_TYPE;
-		this.fileNameTemporary = Main.TMP_PATH + "temporary" + Integer.toString(threadNumber) + Main.FILE_TYPE;
+		this.fileNameOverflow = MainForTest.TMP_PATH + "overflow" + Integer.toString(threadNumber) + MainForTest.FILE_TYPE;
+		this.fileNameTemporary = MainForTest.TMP_PATH + "temporary" + Integer.toString(threadNumber) + MainForTest.FILE_TYPE;
 		
 		/* If the parameter threadNumber is equal to 0 it means that it is the thread for the transformation of the concatenated outputs into
 		 * the final output thanks to the GROUP BY with SUM as aggregation function.
 		 */
 		if(threadNumber == 0) {
-			this.outputFile = new WriterFile(Main.TMP_PATH + "output" + Main.FILE_TYPE);
+			this.outputFile = new WriterFile(MainForTest.TMP_PATH + "output" + MainForTest.FILE_TYPE);
 			this.inputFile = new ReaderFile(beginInputName);
 		} else {
-			this.outputFile = new WriterFile(Main.TMP_PATH + "output" + Integer.toString(threadNumber) + Main.FILE_TYPE);
-			this.inputFile = new ReaderFile(beginInputName + Integer.toString(threadNumber) + Main.FILE_TYPE);
+			this.outputFile = new WriterFile(MainForTest.TMP_PATH + "output" + Integer.toString(threadNumber) + MainForTest.FILE_TYPE);
+			this.inputFile = new ReaderFile(beginInputName + Integer.toString(threadNumber) + MainForTest.FILE_TYPE);
 		}
 		
 		this.overflowFile = new WriterFile(fileNameOverflow);
@@ -85,7 +85,7 @@ public class NestedLoopsSingleThread implements Runnable {
 			}
 			else {
 				// Check if there is place in memory, if not we write the item in the overflow file
-				if (outputTable.size() < Main.MEMORY_SIZE) {
+				if (outputTable.size() < MainForTest.MEMORY_SIZE) {
 					if(threadNumber == 0) {
 						outputTable.put(lineSplitted[positionGroup], Integer.parseInt(lineSplitted[positionGroup + 1]));
 					} else {
@@ -102,8 +102,8 @@ public class NestedLoopsSingleThread implements Runnable {
 		// This corresponds to the case where the end of the input file is reached
 		else {
 			
-			//We write the content of the hashtable in the output file and then make it empty 
-		    System.out.println("Writing in output...");
+			// We write the content of the hashtable in the output file and then make it empty 
+		    // System.out.println("Writing in output...");
 			this.writeHashTableInOutput();
 			this.outputTable.clear();
 			

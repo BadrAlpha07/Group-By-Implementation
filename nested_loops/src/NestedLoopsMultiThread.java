@@ -19,7 +19,7 @@ public class NestedLoopsMultiThread {
 	public NestedLoopsMultiThread(String inputName, int positionGroup, int nbThreads) {
 		this.positionGroup = positionGroup;
 		this.nbThreads = nbThreads;
-		this.tempOutput = new WriterFile(Main.TMP_PATH + "temporaryOutput" + Main.FILE_TYPE);
+		this.tempOutput = new WriterFile(MainForTest.TMP_PATH + "temporaryOutput" + MainForTest.FILE_TYPE);
 		this.inputName = inputName;
 	}
 	
@@ -64,7 +64,7 @@ public class NestedLoopsMultiThread {
         
         // delete temporary files
         for(int i = 1; i <= nbThreads; ++i) {
-        	File inp = new File(beginInputName + Integer.toString(i) + Main.FILE_TYPE);
+        	File inp = new File(beginInputName + Integer.toString(i) + MainForTest.FILE_TYPE);
         	inp.delete();
         }
         File tmpOut = new File(this.tempOutput.getFileName());
@@ -86,7 +86,7 @@ public class NestedLoopsMultiThread {
 		
 		WriterFile[] blockInputs = new WriterFile[this.nbThreads];
 		for(int i=1; i <= this.nbThreads; i++) {
-			blockInputs[i-1] = new WriterFile(nameBlockInput + Integer.toString(i) + Main.FILE_TYPE);
+			blockInputs[i-1] = new WriterFile(nameBlockInput + Integer.toString(i) + MainForTest.FILE_TYPE);
 		}
 		
 		while(line != null) {
@@ -110,7 +110,7 @@ public class NestedLoopsMultiThread {
 	// This function concatenates the outputs files created by the multiple threads in one CSV file tempOutput.csv
 	public void concatenateOutputs() {
 		for(int i=1; i <= this.nbThreads; i++) {
-			ReaderFile outputThreadI = new ReaderFile(Main.TMP_PATH + "output" + Integer.toString(i) + Main.FILE_TYPE);
+			ReaderFile outputThreadI = new ReaderFile(MainForTest.TMP_PATH + "output" + Integer.toString(i) + MainForTest.FILE_TYPE);
 			String line = outputThreadI.readLine();
 			
 			while(line != null) {
