@@ -1,10 +1,11 @@
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * A record for out database!
  */
-public class Record {
+public class Record implements Serializable {
 
     String[] data;
 

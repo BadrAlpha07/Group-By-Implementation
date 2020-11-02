@@ -14,7 +14,6 @@ public class CustomHashMap {
     private HashMapEntry[] buckets;
     private int load;
     private final float max_fill;
-    private final int size;
 
 
     private static class HashMapEntry{
@@ -30,8 +29,8 @@ public class CustomHashMap {
     CustomHashMap(float fill_factor){
         this.max_fill = fill_factor;
         this.load = 0;
-        this.size = 64;
-        this.buckets = new HashMapEntry[this.size];
+        int size = 64;
+        this.buckets = new HashMapEntry[size];
     }
 
     /**
@@ -51,10 +50,12 @@ public class CustomHashMap {
     Record get(String key){
         int hash = hash(key);
         HashMapEntry entry = this.buckets[hash];
-        while(entry != null && entry.key.equals(key)) {
+
+        while(entry != null && !entry.key.equals(key)) {
             hash = (hash + 1) % this.buckets.length; //linear probing.
             entry = this.buckets[hash];
         }
+
         // never seen case
         if(entry == null){
             return null;
@@ -76,7 +77,7 @@ public class CustomHashMap {
 
         int hash = hash(key);
         HashMapEntry entry = this.buckets[hash];
-        while(entry != null && entry.key != key) {
+        while(entry != null && !entry.key.equals(key)) {
             hash = (hash+1)%this.buckets.length; //linear probing.
             entry = this.buckets[hash];
         }
@@ -85,6 +86,7 @@ public class CustomHashMap {
             this.buckets[hash].val = val;
         } //adding new value case
         else {
+
             if((float) this.load/this.buckets.length > this.max_fill) {
                 restructure();
                 put(key, val);
@@ -108,16 +110,15 @@ public class CustomHashMap {
         }
     }
 
-
     /**
      * @return an array representation of all the records the map contains.
      */
-    Record[] values() {
+    public Record[] values() {
         Record[] output = new Record[this.load];
         int j = 0;
-        for(int i = 0; i < this.buckets.length; ++i) {
-            if(this.buckets[i] != null){
-                output[j] = this.buckets[i].val.copy();
+        for (HashMapEntry bucket : this.buckets) {
+            if (bucket != null) {
+                output[j] = bucket.val.copy();
                 j += 1;
             }
         }
