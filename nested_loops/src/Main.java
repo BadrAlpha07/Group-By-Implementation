@@ -7,7 +7,9 @@ import javax.swing.JFileChooser;
 
 public class Main {
 	
+	// This variable models the memory size of our system
 	public static final int MEMORY_SIZE = 300;
+	
 	public static final String TMP_PATH = "./tmp/";
 	public static final String FILE_TYPE = ".csv";
 	
@@ -26,6 +28,7 @@ public class Main {
                 return;
             }
 
+            // Get the file chosen for the GROUP BY
             String inputName = chooser.getSelectedFile().getAbsolutePath();
             File temp = new File(TMP_PATH);
     		temp.mkdirs();
@@ -33,22 +36,23 @@ public class Main {
             ReaderFile input = new ReaderFile(inputName);
             
             String line = input.readLine();
-    		//Here we print the first row to see our column
+    		// Here we print the first row to see our features names
     	    System.out.println(line);
     		String[] splittedLine = line.split(";");
     		int maxPosition = splittedLine.length ;
     	    input.closeFile();
      
+    	    // Get the feature chosen for the GROUP BY
     	    Scanner sc = new Scanner(System.in);        
     	    System.out.println("Enter the position of the column you want to group by:");
     	    int positionGroup = sc.nextInt();
     	    
-    	    //Ask the user the positionGroup of the column he wants to group by
     	    while(positionGroup<0 || positionGroup >= maxPosition) {
     	    	System.out.println("please try again!");
     	        positionGroup = sc.nextInt();
     	    }
     	    
+    	    // Get the parameter to know if we use spark or not
     	    System.out.println("Do you want to use Spark (1 if Yes, 0 if No):");
     	    int spark = sc.nextInt();
     	    
@@ -57,6 +61,7 @@ public class Main {
     	        spark = sc.nextInt();
     	    }
     	    
+    	    // Get the number of threads chosen
     	    System.out.println("Enter the number of threads you want:");
     	    int nbThreads = sc.nextInt();
     	    
@@ -67,13 +72,13 @@ public class Main {
     	    sc.close();
     	    
     	    if(spark == 0) {        	    
-        	    //Measure the execution time
         	    long t1 = System.nanoTime();
         	    
         	    NestedLoopsMultiThread nestedLoops = new NestedLoopsMultiThread(inputName, positionGroup, nbThreads);
         	    nestedLoops.apply();
         	    
                 long t2 = System.nanoTime();
+        	    // Measure the execution time and print it
                 long timing = (t2-t1)/(1000000*10);
                 System.out.format("Processing time: %d ms\n", timing);
     	    } 
@@ -91,16 +96,7 @@ public class Main {
     	    	long t2 = System.nanoTime();
                 long timing = (t2-t1)/(1000000*10);
                 System.out.format("Processing time: %d ms\n", timing);
-//    	    	try {
-//					new mainTest().test();
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
     	    }
-    	    
-    	    
-    	  
         }		
 	}
 }

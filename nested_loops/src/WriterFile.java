@@ -6,12 +6,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
+// This class models a file where we can write lines
 public class WriterFile {
 	
 	private BufferedWriter writer = null;
 	private String fileName = null;
 	
-	//Constructor
 	public WriterFile(String fileName) {
 		try {
 			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(fileName))));
@@ -21,17 +21,17 @@ public class WriterFile {
 		this.fileName = fileName;
 	}
 	
-	//Return the BufferedReader 
+	// Return the BufferedReader 
 	public BufferedWriter getReader() {
 		return writer ;
 	}
 	
-	//return the name of the file 
+	// Return the name of the file 
 	public String getFileName() {
 		return fileName;
 	}
 	
-	//Return one line from the file
+	// Return one line from the file
 	public boolean writeLine(String line) {
 		try {
 			writer.write(line);
@@ -45,7 +45,7 @@ public class WriterFile {
 		 
 	}
 	
-	//Close the BufferedReader 
+	// Close the file
 	public void closeFile() {
 		try {
 			writer.close();

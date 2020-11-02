@@ -4,31 +4,36 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.io.File;
 	
+//This class implements the Nested Loops algorithm on a single thread
 public class NestedLoopsSingleThread implements Runnable {
 
-	//Hashtable simulating the memory, with a maximum size of MEMORY_SIZE
+	// Hashtable simulating the memory, with a maximum size of MEMORY_SIZE
 	private Hashtable<String, Integer> outputTable = new Hashtable<String, Integer>();
 	
 	private String fileNameTemporary = "";
 	private String fileNameOverflow = "";
 	private int threadNumber = 0;
 	
-	//Overflow file stores items that do not fit in memory
+	// Overflow file stores items that do not fit in memory
 	private WriterFile overflowFile = null;
 	private WriterFile outputFile = null;
 	private ReaderFile inputFile = null;
 	
-	private int positionGroup; //position of the column to group by
+	// position of the feature we want to group by
+	private int positionGroup = 0;
 	private boolean isTemporaryInput = false;
 	
 	
-	//Constructor 
+	// Constructor 
 	public NestedLoopsSingleThread(String beginInputName, int threadNumber, int position) {
 		this.positionGroup = position ;
 		this.threadNumber = threadNumber;
 		this.fileNameOverflow = Main.TMP_PATH + "overflow" + Integer.toString(threadNumber) + Main.FILE_TYPE;
 		this.fileNameTemporary = Main.TMP_PATH + "temporary" + Integer.toString(threadNumber) + Main.FILE_TYPE;
 		
+		/* If the parameter threadNumber is equal to 0 it means that it is the thread for the transformation of the concatenated outputs into
+		 * the final output thanks to the GROUP BY with SUM as aggregation function.
+		 */
 		if(threadNumber == 0) {
 			this.outputFile = new WriterFile(Main.TMP_PATH + "output" + Main.FILE_TYPE);
 			this.inputFile = new ReaderFile(beginInputName);
@@ -56,19 +61,21 @@ public class NestedLoopsSingleThread implements Runnable {
 	}
 	
 	
-	//Add item in the Hashtable
-	//return true if we are already reading the input file or the overflow is not empty
-	//return false if we are at the end of the input file and the overflow is empty
+	/* Process an item of the input file.
+	 * Return true if we are not at the end of the input file or if the overflow file is not empty.
+	 * Return false if we are at the end of the input file and the overflow is empty
+	 */
 	public boolean processInputItem() {
-		//Check if the key is already in Hashtable.
-		//If it is the case we update the aggregation value,
-		//else we add the item as a new element in the Hashtable
 		String line = inputFile.readLine();
 		
 		//If there still are items in the input file
 		if (line != null) {
-			//Get line by column and choose the column we want
 			String[] lineSplitted = line.split(";");
+			
+			/* Check if the key is already in the hashtable. If it is the case we update the aggregate the item
+			 * to the corresponding entry of the hashtable, else we add the item as a new element at the end of
+			 * the hashtable if it is not full.
+			 */
 			if (outputTable.containsKey(lineSplitted[positionGroup])) {
 				if(threadNumber == 0) {
 					outputTable.put(lineSplitted[positionGroup], outputTable.get(lineSplitted[positionGroup]) + Integer.parseInt(lineSplitted[positionGroup + 1]));
@@ -77,7 +84,7 @@ public class NestedLoopsSingleThread implements Runnable {
 				}
 			}
 			else {
-				//We check if there is place in memory, if not we write the information in the overflow file
+				// Check if there is place in memory, if not we write the item in the overflow file
 				if (outputTable.size() < Main.MEMORY_SIZE) {
 					if(threadNumber == 0) {
 						outputTable.put(lineSplitted[positionGroup], Integer.parseInt(lineSplitted[positionGroup + 1]));
@@ -91,9 +98,11 @@ public class NestedLoopsSingleThread implements Runnable {
 			}
 			return true;		
 		}
-		//If the end of the input file is reached
+		
+		// This corresponds to the case where the end of the input file is reached
 		else {
-			//We write the content of the Hashtable in the output file and clean it 
+			
+			//We write the content of the hashtable in the output file and then make it empty 
 		    System.out.println("Writing in output...");
 			this.writeHashTableInOutput();
 			this.outputTable.clear();
@@ -110,16 +119,16 @@ public class NestedLoopsSingleThread implements Runnable {
 				return false;
 			}
 			else {
-				//Delete the old input file
+				// Delete the old input file (if it is not the initial input file)
 				this.inputFile.closeFile();
 				if(this.isTemporaryInput) {
 					this.deleteTemporaryFile();
 				}
 				
-				//Rename overflow file in input file and save modifications
+				// Rename overflow file in temporary input file and save modifications
 				overflow.renameTo(new File(this.fileNameTemporary));
 				
-				//Update the inputFile attribute and reset the overflow file
+				// Update the inputFile attribute and reset the overflow file
 				this.isTemporaryInput = true;
 				this.inputFile = new ReaderFile(this.fileNameTemporary);
 				this.overflowFile = new WriterFile(this.fileNameOverflow);
@@ -130,11 +139,12 @@ public class NestedLoopsSingleThread implements Runnable {
 		}
 	}
 	
-	//Return the Hashtable
+	// Return the hashtable
 	public Hashtable<String, Integer> getItemsOutput() {
 		return this.outputTable;
 	}
 	
+	// Return the hashtable keys
 	public Enumeration<String> getKeys() {
 		return this.outputTable.keys();
 	}
@@ -147,6 +157,7 @@ public class NestedLoopsSingleThread implements Runnable {
 		this.inputFile.deleteFile();
 	}
 	
+	// Write the hashtable in an output file
 	public void writeHashTableInOutput() {
 		Iterator<Entry<String, Integer>> itr = outputTable.entrySet().iterator();
 		 

@@ -23,7 +23,6 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
-<!-- https://mvnrepository.com/artifact/org.apache.spark/spark-core -->
     <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-core_2.12</artifactId>
