@@ -19,9 +19,7 @@ public class MainForTest {
 	public static void main(String args[]) {
 		
 		int nbProcessors = Runtime.getRuntime().availableProcessors();
-		// String dirPath = "C:\\Users\\udema\\eclipse-workspace\\project-maven\\dataTest\\";
 		String dirPath = args[0];
-		// int positionGroup = 0;
 		int positionGroup = Integer.parseInt(args[1]);
 		
         File temp = new File(TMP_PATH);
@@ -30,6 +28,15 @@ public class MainForTest {
         WriterFile result = new WriterFile(TMP_PATH + "result.csv");
         result.writeLine("File Name; Single; Multi; Spark");
         File[] files = new File(dirPath).listFiles();
+        
+        // the following 6 lines are only here in order to initialize Spark before tracking the execution times
+        NestedLoopsSpark testSpark = new NestedLoopsSpark(files[0].getAbsolutePath(), positionGroup, nbProcessors);
+    	try {
+			testSpark.apply();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
         for(File file : files) {
         	String fileName = file.getName();
         	String times = fileName;
@@ -62,6 +69,7 @@ public class MainForTest {
             
             result.writeLine(times);
         }
-        result.closeFile();        
+        System.out.println("Done");
+        result.closeFile();    
         }		
 	}

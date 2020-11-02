@@ -39,7 +39,7 @@ public class NestedLoopsSingleThread implements Runnable {
 			this.inputFile = new ReaderFile(beginInputName);
 		} else {
 			this.outputFile = new WriterFile(MainForTest.TMP_PATH + "output" + Integer.toString(threadNumber) + MainForTest.FILE_TYPE);
-			this.inputFile = new ReaderFile(beginInputName + Integer.toString(threadNumber) + MainForTest.FILE_TYPE);
+			this.inputFile = new ReaderFile(beginInputName + "x" + Integer.toString(threadNumber) + MainForTest.FILE_TYPE);
 		}
 		
 		this.overflowFile = new WriterFile(fileNameOverflow);

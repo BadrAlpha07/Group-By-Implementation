@@ -64,7 +64,7 @@ public class NestedLoopsMultiThread {
         
         // delete temporary files
         for(int i = 1; i <= nbThreads; ++i) {
-        	File inp = new File(beginInputName + Integer.toString(i) + MainForTest.FILE_TYPE);
+        	File inp = new File(beginInputName + "x" + Integer.toString(i) + MainForTest.FILE_TYPE);
         	inp.delete();
         }
         File tmpOut = new File(this.tempOutput.getFileName());
@@ -86,7 +86,7 @@ public class NestedLoopsMultiThread {
 		
 		WriterFile[] blockInputs = new WriterFile[this.nbThreads];
 		for(int i=1; i <= this.nbThreads; i++) {
-			blockInputs[i-1] = new WriterFile(nameBlockInput + Integer.toString(i) + MainForTest.FILE_TYPE);
+			blockInputs[i-1] = new WriterFile(nameBlockInput + "x" + Integer.toString(i) + MainForTest.FILE_TYPE);
 		}
 		
 		while(line != null) {
