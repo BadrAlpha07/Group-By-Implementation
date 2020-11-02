@@ -26,6 +26,11 @@ public class HashGroupBySpark {
         public Record[] call(Record[] v1, Record[] v2) {
             Record[] v3 = (Record[]) ArrayUtils.addAll(v1,v2);
             Aggregation agg = new SumAggregation();
+            // the intermediate results are in the format
+            // groupping_attribute;aggregation_value
+            //example : student;45
+            //          teacher;33
+            //so we apply again HashGroupBy on this new simple table
             HashGroupBy grp = new HashGroupBy(0, 1, agg);
             return grp.apply(v3);
         }
@@ -86,7 +91,7 @@ public class HashGroupBySpark {
                 .filter(line -> !(line.get(0).equals("id")))
                 .map(line -> concat(line,Integer.toString(line.get(1).hashCode()%10)));
 
-        // Make the group-by on every partition (mapPartitions) than merge everything (reduce)
+        // Make the group-by on every partition (mapPartitions) then merge everything (reduce)
         Record[] output;
         Aggregation agg = new SumAggregation();
         HashPartition grouBy = new HashPartition(agg,1,3);
