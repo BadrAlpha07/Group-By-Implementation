@@ -1,3 +1,5 @@
+package org.ulysse.project_maven;
+
 import java.io.File;
 import java.util.ArrayList;
 

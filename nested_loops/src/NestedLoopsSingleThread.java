@@ -1,3 +1,4 @@
+package org.ulysse.project_maven;
 
 import java.util.*;
 import java.util.Map.Entry;

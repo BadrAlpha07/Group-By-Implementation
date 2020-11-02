@@ -1,10 +1,13 @@
+package org.ulysse.project_maven;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.Scanner;
 import javax.swing.JFileChooser;
 
 public class Main {
 	
-	public static final int MEMORY_SIZE = 1000;
+	public static final int MEMORY_SIZE = 300;
 	public static final String TMP_PATH = "./tmp/";
 	public static final String FILE_TYPE = ".csv";
 	
@@ -46,6 +49,14 @@ public class Main {
     	        positionGroup = sc.nextInt();
     	    }
     	    
+    	    System.out.println("Do you want to use Spark (1 if Yes, 0 if No):");
+    	    int spark = sc.nextInt();
+    	    
+    	    while(spark != 0 && spark != 1) {
+    	    	System.out.println("please try again!");
+    	        spark = sc.nextInt();
+    	    }
+    	    
     	    System.out.println("Enter the number of threads you want:");
     	    int nbThreads = sc.nextInt();
     	    
@@ -55,15 +66,40 @@ public class Main {
     	    }
     	    sc.close();
     	    
-    	    //Measure the execution time
-    	    long t1 = System.nanoTime();
+    	    if(spark == 0) {        	    
+        	    //Measure the execution time
+        	    long t1 = System.nanoTime();
+        	    
+        	    NestedLoopsMultiThread nestedLoops = new NestedLoopsMultiThread(inputName, positionGroup, nbThreads);
+        	    nestedLoops.apply();
+        	    
+                long t2 = System.nanoTime();
+                long timing = (t2-t1)/(1000000*10);
+                System.out.format("Processing time: %d ms\n", timing);
+    	    } 
+    	    else {
+    	    	NestedLoopsSpark nestedLoops = new NestedLoopsSpark(inputName, positionGroup, nbThreads);
+    	    	
+    	    	long t1 = System.nanoTime();
+    	    	
+    	    	try {
+					nestedLoops.apply();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+    	    	
+    	    	long t2 = System.nanoTime();
+                long timing = (t2-t1)/(1000000*10);
+                System.out.format("Processing time: %d ms\n", timing);
+//    	    	try {
+//					new mainTest().test();
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+    	    }
     	    
-    	    NestedLoopsMultiThread nestedLoops = new NestedLoopsMultiThread(inputName, positionGroup, nbThreads);
-    	    nestedLoops.apply();
     	    
-            long t2 = System.nanoTime();
-            long timing = (t2-t1)/(1000000*10);
-            System.out.format("Processing time: %d ms\n", timing);
     	  
         }		
 	}
