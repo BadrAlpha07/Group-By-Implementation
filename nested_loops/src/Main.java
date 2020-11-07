@@ -8,7 +8,7 @@ import javax.swing.JFileChooser;
 public class Main {
 	
 	// This variable models the memory size of our system
-	public static final int MEMORY_SIZE = 300;
+	public static final int MEMORY_SIZE = 100000;
 	
 	public static final String TMP_PATH = "./tmp/";
 	public static final String FILE_TYPE = ".csv";
