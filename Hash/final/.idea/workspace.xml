@@ -23,6 +23,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="88f2e2fb-7ace-4594-958a-03650d64167c" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/final.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/result.csv" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/MainTest.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/raw_java/Aggregation.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/raw_java/CountAggregation.java" afterDir="false" />
@@ -44,8 +52,40 @@
       <change afterPath="$PROJECT_DIR$/src/main/java/spark/Record.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/spark/SumAggregation.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/utils/WriterFile.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/MainTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/data_test1.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/raw_java/Aggregation.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/raw_java/CountAggregation.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/raw_java/CsvPrinter.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/raw_java/CustomConcurrentHashMap.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/raw_java/CustomHashMap$HashMapEntry.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/raw_java/CustomHashMap.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/raw_java/GroupBy.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/raw_java/HashGroupBySingle.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/raw_java/ParallelHashGroupBy$HashGroupBy.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/raw_java/ParallelHashGroupBy.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/raw_java/PartitioningHashGroupBy$MapFiller.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/raw_java/PartitioningHashGroupBy.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/raw_java/Record.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/raw_java/SumAggregation.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/spark/Aggregation.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/spark/CountAggregation.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/spark/CustomHashMap$HashMapEntry.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/spark/CustomHashMap.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/spark/GroupBy.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/spark/HashGroupBy.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/spark/HashGroupBySpark$HashPartition.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/spark/HashGroupBySpark$Merge.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/spark/HashGroupBySpark.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/spark/Record.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/spark/SumAggregation.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/utils/WriterFile.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test_out_multi.data" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test_out_single.data" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tmp/result.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../data_test1.csv" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/data_test1.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../src/V0.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../dataGen/group/info.csv" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
