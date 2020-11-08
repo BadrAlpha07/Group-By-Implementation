@@ -21,4 +21,5 @@ In fact, apart from the functions used to parse the input files we only used two
 - **mapPartitions** which splits the input for the different workers and perform an operation on each partition. 
 - **reduce** that take the results of **mapPartitions** and group 2 by 2 the output until we obtain a final result.
 
-Like the two others implementations, this algorithm relies heavily of our custom implementation of a HashMap.
+All of the others operations are handmade, especially the implementation of the custom hashtable et the operations on hashtables (merge records, merge tables, collision management, restructuration if table is full).
+Like the two others implementations, this algorithm relies heavily of our custom implementation of the HashTable and so are the performances.
