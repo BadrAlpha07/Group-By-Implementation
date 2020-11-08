@@ -31,7 +31,9 @@ Test were runned on two folders of files, with variables **group** distribution 
 The folders can be found there:
  - [Size test](/main/dataGen/size)
  - [Group test](/main/dataGen/group)
+ 
  The results can be found there:
  - [Size results](final/result_size.csv)
  - [Group results](final/result_group.csv)
+ 
  Results format are : **file**;**timeSingleThreaded**;**timeMultiThreaded**;**timeSpark**
