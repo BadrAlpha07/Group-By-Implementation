@@ -29,8 +29,8 @@ Like the two others implementations, this algorithm relies heavily of our custom
 
 Test were runned on two folders of files, with variables **group** distribution and **size**.
 The folders can be found there:
- - [Size test](/main/dataGen/size)
- - [Group test](/main/dataGen/group)
+ - [Size test](/dataGen/size)
+ - [Group test](/dataGen/group)
  
  The results can be found there:
  - [Size results](final/result_size.csv)
