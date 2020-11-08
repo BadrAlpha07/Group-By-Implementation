@@ -14,6 +14,7 @@ We have done 3 implemtentations :
   
 The architecture inside the modules are quite similar but are differ in several points, especially the Spark implementation required some adaptations in order to work with the Spark framework.
 
+## Implementation details
 ### Single Threaded
 ### Spark Implementation
 The Spark implementation uses only function of the main Spark module and not the SparkSQL module.
@@ -23,3 +24,14 @@ In fact, apart from the functions used to parse the input files we only used two
 
 All of the others operations are handmade, especially the implementation of the custom hashtable and the operations on the hashtables (merge records, merge tables, collision management, restructuration if table is full).
 Like the two others implementations, this algorithm relies heavily of our custom implementation of the HashTable and so are the performances.
+
+## Results
+
+Test were runned on two folders of files, with variables **group** distribution and **size**.
+The folders can be found there:
+ - [Size test](/main/dataGen/size)
+ - [Group test](/main/dataGen/group)
+ The results can be found there:
+ - [Size results](final/result_size.csv)
+ - [Group results](final/result_group.csv)
+ Results format are : **file**;**timeSingleThreaded**;**timeMultiThreaded**;**timeSpark**
