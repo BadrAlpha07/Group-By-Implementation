@@ -1,12 +1,6 @@
 # Group-By Project
+We divided the work into three groups, each group had to make a particular algorithm and the corresponding single-threaded, multi-threaded and Spark implementations.
 
-## Nested Loops
-## Sorting
-## Hashing
-### Literature review
-### Single-Threaded implementation
-### Multi-Threaded implementation
-#### Partition Hashing
-#### Concurrent Hashing
-
-### Spark implementation
+ - [Nested Loops Group By](nested_loops)
+ - [Sort Group By and Order By](Sort)
+ - [Hash Group By](Hash)
