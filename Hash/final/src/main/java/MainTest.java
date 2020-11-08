@@ -1,19 +1,14 @@
-
-
 import org.apache.spark.api.java.JavaRDD;
 import raw_java.*;
-import spark.HashGroupBy;
 import spark.HashGroupBySpark;
 import utils.WriterFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 
 public class MainTest {
 
     // This variable models the memory size of our system
-    public static final int MEMORY_SIZE = 100000;
 
     public static final String TMP_PATH = "./tmp/";
     public static final String FILE_TYPE = ".csv";
@@ -28,7 +23,7 @@ public class MainTest {
         String dirPath = args[0];
         int positionGroup = Integer.parseInt(args[1]);
         int repetitions = Integer.parseInt(args[2]);
-        int nbThreads =4;
+        int nbThreads =64;
         File temp = new File(TMP_PATH);
         temp.mkdirs();
 
@@ -36,12 +31,7 @@ public class MainTest {
         result.writeLine("File Name; Single; Multi; Spark");
         File[] files = new File(dirPath).listFiles();
 
-        // the following 6 lines are only here in order to initialize Spark before tracking the execution times
-        HashGroupBySpark groupBySparkTest = new HashGroupBySpark(files[0].getAbsolutePath(),nbThreads);
-        spark.Aggregation agg_spark_test = new spark.CountAggregation();
-        HashGroupBySpark.HashPartition grouBy_test = new HashGroupBySpark.HashPartition(agg_spark_test,positionGroup,0);
-        spark.Record[] output_spark_test = groupBySparkTest.file.mapPartitions(grouBy_test).reduce(new HashGroupBySpark.Merge());
-        output_spark_test = null;
+
 
         // loop over the directory
         for(File file : files) {
@@ -74,18 +64,15 @@ public class MainTest {
 
 
 
-                HashGroupBySpark groupBySpark = new HashGroupBySpark(file.getAbsolutePath(),4);
-                spark.Aggregation agg_spark = new spark.CountAggregation();
-                HashGroupBySpark.HashPartition grouBy = new HashGroupBySpark.HashPartition(agg_spark,1,0);
-                JavaRDD<spark.Record[]> output_spark = groupBySpark.file.mapPartitions(grouBy);
+                HashGroupBySpark groupBySpark = new HashGroupBySpark(file.getAbsolutePath(),nbThreads,1,0);
                 long t5 = System.nanoTime();
-                output_spark.reduce(new HashGroupBySpark.Merge());
-                output_spark = null;
+                spark.CustomHashMap res = groupBySpark.apply();
                 long t6 = System.nanoTime();
                 timingSpark += (t6-t5)/(1000000*10);
                 System.out.println(timingSpark);
-
+                groupBySpark.sc.stop();
             }
+
 
             timingSingle /= repetitions;
             timingMulti /= repetitions;

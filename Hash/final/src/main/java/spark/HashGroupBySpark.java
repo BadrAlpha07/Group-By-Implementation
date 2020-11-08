@@ -1,7 +1,6 @@
 package spark;
 
 import org.apache.commons.collections.IteratorUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaRDD;
@@ -9,23 +8,31 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function2;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 
 public class HashGroupBySpark {
 
     public final JavaRDD<ArrayList<String>> file;
+    public final JavaSparkContext sc;
+    private final int col_by;
+    private final int agg_on;
 
-    public HashGroupBySpark(String file_path,int nb_threads){
+
+    public HashGroupBySpark(String file_path,int nb_threads,int col_by, int agg_on){
+        this.col_by = col_by;
+        this.agg_on = agg_on;
         long t5 = System.nanoTime();
         SparkConf conf = new SparkConf().setAppName("spark.HashGroupBy").setMaster("local[*]");
         conf.set("spark.testing.memory", "471859200");
-        JavaSparkContext sc = JavaSparkContext.fromSparkContext(SparkContext.getOrCreate(conf));
-
+        conf.registerKryoClasses(new Class<?>[]{CustomHashMap.class, CustomHashMap.HashMapEntry.class});
+        this.sc = JavaSparkContext.fromSparkContext(SparkContext.getOrCreate(conf));
+        sc.setLogLevel("INFO");
         this.file = sc.textFile(file_path,nb_threads)
-                .map((line) -> new ArrayList<>(Arrays.asList(line.split(";"))))
-                .filter(line -> (line.size() > 1))
-                .filter(line -> !(line.get(0).equals("id")));
+                .map((line) -> new ArrayList<>(Arrays.asList(line.split(";"))));
+               // .filter(line -> (line.size() > 1))
+                //.filter(line -> !(line.get(0).equals("id")));
 
 
     }
@@ -38,38 +45,30 @@ public class HashGroupBySpark {
         return array;
     }
 
-    public static class Merge implements Function2<Record[], Record[], Record[]> {
+    public static class Merge implements Function2<CustomHashMap,CustomHashMap,CustomHashMap> {
 
+        private final Aggregation agg;
+
+        public Merge(Aggregation agg){
+            this.agg = agg;
+        }
 
         @Override
-        public Record[] call(Record[] v1, Record[] v2) {
-
-            Record[] v3 = (Record[]) ArrayUtils.addAll(v1,v2);
-            Aggregation agg = new SumAggregation();
-            // the intermediate results are in the format
-            // groupping_attribute;aggregation_value
-            //example : student;45
-            //          teacher;33
-            //so we apply again spark.HashGroupBy on this new simple table
-            HashGroupBy grp = new HashGroupBy(0, 1, agg);
-            Record[] res = grp.apply(v3);
-
-            return res;
+        public CustomHashMap call(CustomHashMap t1, CustomHashMap t2) {
+            return agg.mergeTables(t1,t2);
         }
     }
 
-    public static class HashPartition implements FlatMapFunction<Iterator<ArrayList<String>>,Record[]>
+    public static class HashPartition implements FlatMapFunction<Iterator<ArrayList<String>>,CustomHashMap>
     {
         private final Aggregation agg;
-        private final int by;
-        private final int agg_on;
 
-        public HashPartition(Aggregation agg, int by, int agg_on){
+
+        public HashPartition(Aggregation agg){
             this.agg = agg;
-            this.by = by;
-            this.agg_on = agg_on;
+
         }
-        public Iterator<Record[]> call(Iterator<ArrayList<String>> records_raw_it) {
+        public Iterator<CustomHashMap> call(Iterator<ArrayList<String>> records_raw_it) {
         /*
         Takes a list of record and perform group-by on the partition
          */
@@ -78,10 +77,11 @@ public class HashGroupBySpark {
             /*System.out.println("BEFORE");
             for (Record record : records) {
                 System.out.println(Arrays.toString(record.data));
-            }*/
+            }
+            */
 
-            HashGroupBy grp = new HashGroupBy(this.by, this.agg_on, this.agg);
-            Record[][] result = new Record[][]{grp.apply(records)};
+            HashGroupBy grp = new HashGroupBy(agg.getCol_by(), agg.getAgg_on(), this.agg);
+            CustomHashMap[] result = new CustomHashMap[]{grp.apply(records)};
             return Arrays.stream(result).iterator();
 
         }
@@ -89,15 +89,17 @@ public class HashGroupBySpark {
 
     }
 
-
+    public CustomHashMap apply(){
+        Aggregation agg_spark = new CountAggregation(this.agg_on,this.col_by);
+        HashPartition grouBy = new HashPartition(agg_spark);
+        CustomHashMap output =this.file.mapPartitions(grouBy).reduce(new Merge(agg_spark));
+        sc.stop();
+        return output;
+    }
 
     public static void main(String[] args) {
 
         // Spark Configuration
-
-
-
-
         // Spark read CSV and format it
         /*
         CSV FORMAT
@@ -105,20 +107,14 @@ public class HashGroupBySpark {
         1;Student;Nora;56
         ...
          */
-        HashGroupBySpark groupBySpark = new HashGroupBySpark("src/main/resources/data_test1.csv",4);
-
+        HashGroupBySpark groupBySpark = new HashGroupBySpark("src/main/resources/data_test1.csv",4,1,0);
         // Make the group-by on every partition (mapPartitions) then merge everything (reduce)
-
-        Aggregation agg = new CountAggregation();
-        HashPartition grouBy = new HashPartition(agg,1,0);
-
-        JavaRDD<Record[]> output = groupBySpark.file.mapPartitions(grouBy);
-        output.reduce(new Merge());
-
-        /*Print output
-        for(Record record:output){
+        CustomHashMap res = groupBySpark.apply();
+        //Print output
+        Record[] values_res = res.values();
+        for(Record record:values_res){
             System.out.println(Arrays.toString(record.data));
-        }*/
+        }
 
     }
 }

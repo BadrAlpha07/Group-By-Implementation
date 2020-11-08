@@ -7,31 +7,31 @@ package spark;
 public class HashGroupBy implements GroupBy{
 
 
-    private final int by;
+    private final int col_by;
     private final int agg_on;
     private final CustomHashMap map;
     private final Aggregation agg;
 
-    HashGroupBy(int by, int agg_on, Aggregation agg)
+    HashGroupBy(int col_by, int agg_on, Aggregation agg)
     {
         //this.map = new HashMap<Integer, spark.Record>();
         this.map = new CustomHashMap(0.7f);
-        this.by = by;
+        this.col_by = col_by;
         this.agg_on = agg_on;
         this.agg = agg;
     }
 
-    public Record[] apply(Record[] input) {
+    public CustomHashMap apply(Record[] input) {
         for(Record record: input){
-            String group = record.get(by);
+            String group = record.get(col_by);
             Record group_val = map.get(group);
 
             if(group_val == null) {
-                map.put(group, agg.initialize(record,group,by,agg_on));
-            } else map.put(group, agg.merge(record, group_val, by, agg_on));
+                map.put(group, agg.initialize(record,group));
+            } else map.put(group, agg.merge(record, group_val));
         }
 
-        return map.values();
+        return map;
     }
 
 }

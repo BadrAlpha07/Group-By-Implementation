@@ -1,5 +1,7 @@
 package spark;
 
+import java.io.Serializable;
+
 /**
  * A custom hash map to support the backend of the spark.HashGroupBy alogrithm.
  * Is supposed to only work with interger keys EDIT : changed to work with any String
@@ -8,15 +10,15 @@ package spark;
  * Uses a simple open-addressing with linear probing scheme.
  *
  */
-public class CustomHashMap {
 
+public class CustomHashMap{
 
-    private HashMapEntry[] buckets;
+    public HashMapEntry[] buckets;
     private int load;
     private final float max_fill;
 
 
-    private static class HashMapEntry{
+    public static class HashMapEntry{
         String key;
         Record val;
         HashMapEntry(String key, Record val){
