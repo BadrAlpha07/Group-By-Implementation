@@ -38,8 +38,7 @@ public class CustomHashMap{
     /**
      * @param key String valued key.
      * Hashes the key so that it fits in the buckets.
-     *#righ now is simply modular hash
-     * Maybe one day we will see a better hashing function used here.#
+     * Uses Hashcode Java and only keepe a positive int.
      */
     private int hash(String key){
         return (key.hashCode() & 0xfffffff)% buckets.length;
