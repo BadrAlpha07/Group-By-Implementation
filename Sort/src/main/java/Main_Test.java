@@ -54,7 +54,7 @@ public class Main_Test {
         long t1 = System.nanoTime();
         spark.Spark_grouby(path,4,1,sc);
         long t2 = System.nanoTime(); 
-        long timing = (t2-t1)/(1000000*10);
+        long timing = (t2-t1)/(1000000);
         temps_spark[i]=timing;
       }
         float cal=0;
@@ -82,7 +82,7 @@ public class Main_Test {
         long t3 = System.nanoTime();
         mutli.GroupingMulti(matrix,4,1);
         long t4 = System.nanoTime();
-        long timing_2 = (t4-t3)/(1000000*10);
+        long timing_2 = (t4-t3)/(1000000);
         temps_Multi[i]=timing_2;
         System.out.println(timing_2);
         
@@ -111,7 +111,7 @@ public class Main_Test {
         long t5 = System.nanoTime();
         single.SingleThreadSort(matrix,1);
         long t6 = System.nanoTime();
-        long timing_3 = (t6-t5)/(1000000*10);
+        long timing_3 = (t6-t5)/(1000000);
         temps_Single[i]=timing_3;
         //System.out.println(timing_3);
         
