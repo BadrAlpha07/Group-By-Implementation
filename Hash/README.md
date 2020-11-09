@@ -51,8 +51,14 @@ Below you can find the results of the tests for the two folders (**size** and **
  ![](img/group.png)
 
 ### Analysis
- - For the **size test**, what we can see is that the Spark implementation outclasses the two others when the amount of data is small a
-than is way worse when the data is huge. Considering these test have been run on a computer with 4 cores, using 4 threads in parallel we can assume that it would have been faster on more cores, as Spark is a language made to scale. Between the single-threaded and the multi-threaded implementation, the single threaded seem to be more consistent as the data size increases. It can be explained by the fact that every partition has to store a huge CustomHashTable which can slow the process while the computer has to deal with multiple threads.
+For the **size test**, 
+ - What we can see is that the Spark implementation outclasses the two others when the amount of data is small, then is way worse when the data is huge. Considering these tests have been run on a computer with 4 cores, using 4 threads in parallel we can assume that it would have been faster on more cores, as Spark is a language made to scale. The growth rate in n, the number of data, seem to be polynomial.
+ - The multi-threaded implementation behaves like the Spark one, but an order of magnitude faster. It also seems to be polynomial in n, probably due to some constraints related to the computer rather than the algorithm in itself. The gain for the multithreaded implementation is quite brittle: we recovered only an 1.5 speedup for a 4 cores run. This might be explained by how fast the single-threaded version already is: every little additional instruction to enable concurrency is in fact a lot of overhead. The sort-group implementation scaled way better with the number of threads.
+ - The single-threaded implementation seems to be the most efficient one. It keeps its theoretical linear dependency in n and so achieves the best performances. It is coherent, considering the fact that we supposed all of the inputs fitted in memory. Scaling seems to be linear until an exponential explosion for the largest inputs. Explanation is that performance is severely hit when running close to maximum memory. 
 
- - For the **group test**, the Spark implementation is almost always worse than the other. Considering the implementations are very similar, it is, we suppose, due to the Spark process in itself, and the fact that our class CustomHashTable is not optimized to work with it. The two others implementations seem to be quite independant from the group size, and quite similar in their performances.
+
+For the **group test**, 
+ - The Spark implementation is almost always worse than the others. Considering the implementations are very similar, it is, we suppose, due to the Spark process in itself, and the fact that our class CustomHashTable is not optimized to work with it.
+ - The two other implementations seem to be quite independent from the number of groups, and quite similar in their performances. This is different from the nested loop results, where time spent is linear on the number of groups.
+
 
