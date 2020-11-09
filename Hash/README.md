@@ -19,7 +19,7 @@ The architecture inside the modules are quite similar but are differ in several 
 It is important to understand the concepts involved in the single-threaded version, because both multi-processors and spark implementation borrow from it. The algorithm works in two passes. One is to fill a hashtable with the aggregated groups values. The other one simply outputs the groups. From this, one can see that the most interesting part is the hashtable, and how to insert, retrieve and update values. See the report to get more details about the hashtable implementation.
 
 ### Multithreaded Implementation
-*We implemented three versions of the multiprocessor algorithm. We only kept the best performing option for the measures. *
+*We implemented three versions of the multiprocessor algorithm. We only kept the best performing option for the measures.*
 
 Our implementation of the partitioning hash table starts by creating a new hash-table for each thread. There is no need for a merge function. Instead, each thread will only input in its own hashtable the records that belong to its partition. The partition is determined by a modular hashing on the group, by the number of threads. This way, no two records belonging to the same groups can be managed by different threads. 
 Because of this careful partitioning, there is no need to merge outputs. Each thread can start outputting groups as soon as it is finished.
