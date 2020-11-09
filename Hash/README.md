@@ -37,3 +37,7 @@ The folders can be found there:
  - [Group results](final/result_group.csv)
  
  Results format are : **file**;**timeSingleThreaded**;**timeMultiThreaded**;**timeSpark**
+ 
+ ### Plots
+ ![](img/group.png)
+ ![](img/size.png)
