@@ -35,9 +35,9 @@ public class MultiThreaded {
         
         @Override
         public String[][] call() throws Exception {
-            matrix = MergeSort(matrix,matrix.length,0);
+            matrix =  Merge_Sort_Matrix(matrix,matrix.length,0);//Heap_Sort_Matrix(matrix, 0);// Selection_Sort_matrix(matrix, 0); //We Sort data int first place
             String[][] out;
-            out = Aggregation(matrix,0);
+            out = Aggregation(matrix,0); //Aggregate the data
             return out;
         }
     }
@@ -92,7 +92,7 @@ public class MultiThreaded {
        return matrix;
        }
 
-    public String [][]  MergeSort(String [][] matrix, int n,int p ) {
+    public String [][]  Merge_Sort_Matrix(String [][] matrix, int n,int p ) {
         
 
         if (n < 2) {
@@ -110,8 +110,8 @@ public class MultiThreaded {
     for (int i = midpoint; i < n; i++) {
         RIGHT[i - midpoint] = matrix[i];
     }
-    MergeSort(LEFT, midpoint,p);
-    MergeSort(RIGHT, n - midpoint,p);
+    Merge_Sort_Matrix(LEFT, midpoint,p);
+    Merge_Sort_Matrix(RIGHT, n - midpoint,p);
     return merge(matrix, LEFT, RIGHT, midpoint, n - midpoint,p);
     }
 
@@ -148,18 +148,15 @@ public class MultiThreaded {
     }
     return a;
 }
-    public  String [][] sort(String [][] matrix, int p) 
+    public static String[][] Heap_Sort_Matrix(String [][] matrix,int p) 
     { 
         int n = matrix.length; 
-        int c=0;
-         if(p == 0){ //case of Grouping 
-                c=col;
-                }
-        // Build heap (rearrange array) 
-        for (int i = n / 2 - 1; i >= 0; i--) 
-            heapify(matrix, n, i,c); 
   
-        // One by one extract an element from heap 
+        // Create the heap tree and reorder the martrix
+        for (int i = n / 2 - 1; i >= 0; i--) 
+            heapify(matrix, n, i,p); 
+  
+        // Extract greatest element (the root of the heap and put it at the end) that's why loop n-1 to 1 
         for (int i=n-1; i>0; i--) 
         { 
             // Move current root to end 
@@ -167,26 +164,30 @@ public class MultiThreaded {
             matrix[0] = matrix[i]; 
             matrix[i] = temp; 
   
-            // call max heapify on the reduced heap 
-            heapify(matrix, i, 0,c); 
-        }
+            // Create max heap tree using the new sub-tree
+            heapify(matrix, i, 0, p); 
+        } 
         return matrix;
     } 
-    void heapify(String [][] matrix, int n, int i,int col) 
+    static void heapify(String [][] matrix, int n, int i, int p) 
     { 
-        int largest = i; // Initialize largest as root 
-        int l = 2*i + 1; // left = 2*i + 1 
-        int r = 2*i + 2; // right = 2*i + 2 
-  
-        // If left child is larger than root 
-        if (l < n && Integer.parseInt(matrix[l][col]) > Integer.parseInt(matrix[largest][col])) 
+        int largest = i; // Put the root as largest 
+        int l = 2*i + 1; // take the left child of the root
+        int r = 2*i + 2; // take the right child of the root
+        int c = 0;
+        if(p == 0)
+        {
+            c = 1;
+        }
+        // Chceck left child 
+        if (l < n && Integer.parseInt(matrix[l][1]) > Integer.parseInt(matrix[largest][c])) 
             largest = l; 
   
-        // If right child is larger than largest so far 
-        if (r < n && Integer.parseInt(matrix[r][col]) > Integer.parseInt(matrix[largest][col])) 
+        // Check right child
+        if (r < n && Integer.parseInt(matrix[r][1]) > Integer.parseInt(matrix[largest][c])) 
             largest = r; 
   
-        // If largest is not root 
+        // Swap if order was not right 
         if (largest != i) 
         { 
             String [] swap = matrix[i]; 
@@ -194,7 +195,7 @@ public class MultiThreaded {
             matrix[largest] = swap; 
   
             // Recursively heapify the affected sub-tree 
-            heapify(matrix, n, largest,col); 
+            heapify(matrix, n, largest,p); 
         } 
     }
        
@@ -247,7 +248,7 @@ public class MultiThreaded {
             }
            return output;
     }
-       public  String [][] Merge_parts(String [][] part1, String [][] part2) {
+      public  String [][] Merge_parts(String [][] part1, String [][] part2) {
         // We merge the output of our threads after aggregation
         String[][] merged = new String[part1.length + part2.length][2];
         for (int i = 0; i < part1.length; i++) {
@@ -258,7 +259,7 @@ public class MultiThreaded {
             merged[part1.length + i][0] = part2[i][0];
             merged[part1.length + i][1] = part2[i][1];
         }
-        merged = MergeSort(merged,merged.length,1);
+        merged = Merge_Sort_Matrix(merged,merged.length,1);//Heap_Sort_Matrix(merged,1);//Selection_Sort_matrix(merged,1);//Merge_Sort_Matrix(merged,merged.length,1);
         String[][] out;
         out = Aggregation(merged, 1);
         return out;
