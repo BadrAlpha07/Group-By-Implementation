@@ -39,8 +39,9 @@ The folders can be found there:
  Results format are : **file**;**timeSingleThreaded**;**timeMultiThreaded**;**timeSpark**
  
  ### Plots
- ![](img/group.png)
+
  ![](img/size.png)
+ ![](img/group.png)
 
 ### Analysis
  - For the **size test**, what we can see is that the Spark implementation outclasses the two others when the amount of data is small a
