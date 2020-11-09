@@ -23,12 +23,14 @@ public class HashGroupBySpark {
     public HashGroupBySpark(String file_path,int nb_threads,int col_by, int agg_on){
         this.col_by = col_by;
         this.agg_on = agg_on;
-        long t5 = System.nanoTime();
+        // Spark configuration
         SparkConf conf = new SparkConf().setAppName("spark.HashGroupBy").setMaster("local[*]");
         conf.set("spark.testing.memory", "471859200");
+        // It's a way to register serializable classes (faster than the java builtin serializable implementation)
         conf.registerKryoClasses(new Class<?>[]{CustomHashMap.class, CustomHashMap.HashMapEntry.class});
         this.sc = JavaSparkContext.fromSparkContext(SparkContext.getOrCreate(conf));
-        sc.setLogLevel("INFO");
+        sc.setLogLevel("WARN");
+        //Parsing of the file
         this.file = sc.textFile(file_path,nb_threads)
                 .map((line) -> new ArrayList<>(Arrays.asList(line.split(";"))));
                // .filter(line -> (line.size() > 1))
@@ -38,13 +40,10 @@ public class HashGroupBySpark {
     }
 
 
-    private static List<String> concat(List<String> array, String element){
-        /* Just a small function to concatenate a String to an array of String and return the result
-         */
-        array.add(element);
-        return array;
-    }
-
+    /**
+    *A small class used  only in Reduce to merge 2 by 2 hash tables that are intermediary results.
+    *
+    */
     public static class Merge implements Function2<CustomHashMap,CustomHashMap,CustomHashMap> {
 
         private final Aggregation agg;
@@ -58,7 +57,12 @@ public class HashGroupBySpark {
             return agg.mergeTables(t1,t2);
         }
     }
-
+    
+    
+    /**
+    *A small class used only in MapPartitions to apply a single threaded hash group by on each partition in parallel.
+    *
+    */
     public static class HashPartition implements FlatMapFunction<Iterator<ArrayList<String>>,CustomHashMap>
     {
         private final Aggregation agg;
@@ -89,24 +93,21 @@ public class HashGroupBySpark {
 
     }
 
+
     public CustomHashMap apply(){
+        // Initialization of aggregation class and HashPartition class
         Aggregation agg_spark = new CountAggregation(this.agg_on,this.col_by);
         HashPartition grouBy = new HashPartition(agg_spark);
+        //We hash on every partition then reduce
         CustomHashMap output =this.file.mapPartitions(grouBy).reduce(new Merge(agg_spark));
+        //Stop SparkContext
         sc.stop();
         return output;
     }
 
     public static void main(String[] args) {
 
-        // Spark Configuration
-        // Spark read CSV and format it
-        /*
-        CSV FORMAT
-        id;role;names;height
-        1;Student;Nora;56
-        ...
-         */
+        //A testing function used in development
         HashGroupBySpark groupBySpark = new HashGroupBySpark("src/main/resources/data_test1.csv",4,1,0);
         // Make the group-by on every partition (mapPartitions) then merge everything (reduce)
         CustomHashMap res = groupBySpark.apply();
