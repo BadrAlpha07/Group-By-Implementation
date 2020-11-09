@@ -25,7 +25,6 @@ import java.util.concurrent.Future;
  */
 public class MultiThreaded {
     int col=0;
-    SingleThreaded grps=new SingleThreaded();
     public  class Groupby_Thread implements Callable<String[][]> {
         // Create  threads to group by sorting the data
         private String[][] matrix;
