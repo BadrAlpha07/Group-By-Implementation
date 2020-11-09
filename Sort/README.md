@@ -3,9 +3,9 @@ In this section, we implement the group by sorting which consists of first sorti
 The user can choose at first the CSV file, secondly the column name that contains groups and finally choose the implementation mode, the results are written in a CSV file
 
 ## Architecture
-The main code used to generate the results files is [Main_Test.java](Sort/src/main/java/Main_Test.java).
-We have done 3 implemtentations :
- - Single-Threaded Group By Sort, that can be found [there](Sort/src/main/java/SingleThreaded.java).
+We have done 3 implemtentations :The main code used to generate the results files is [Main_Test.java](src/main/java/Main_Test.java).
+
+ - Single-Threaded Group By Sort, that can be found [there](src/main/java/SingleThreaded.java).
  - Multi-Threaded Group By Sort, that can be found  [there](Sort/src/main/java/MultiThreaded.java).
  - Spark distributed Group By Sort, that can be found [there](Sort/src/main/java/GroupbySortSpark.java).
 The class [MainSortGroup.java] used to implement the interface [there](Sort/src/main/java/MainSortGroup.java).
