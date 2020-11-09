@@ -190,9 +190,9 @@ public class MultiThreaded {
         // Swap if order was not right 
         if (largest != i) 
         { 
-            String [] swap = matrix[i]; 
+            String [] tmp = matrix[i]; 
             matrix[i] = matrix[largest]; 
-            matrix[largest] = swap; 
+            matrix[largest] = tmp; 
   
             // Recursively heapify the affected sub-tree 
             heapify(matrix, n, largest,p); 
@@ -259,7 +259,7 @@ public class MultiThreaded {
             merged[part1.length + i][0] = part2[i][0];
             merged[part1.length + i][1] = part2[i][1];
         }
-        merged = Merge_Sort_Matrix(merged,merged.length,1);//Heap_Sort_Matrix(merged,1);//Selection_Sort_matrix(merged,1);//Merge_Sort_Matrix(merged,merged.length,1);
+        merged = Merge_Sort_Matrix(merged,merged.length,1);//Heap_Sort_Matrix(merged,1);//Selection_Sort_matrix(merged,1);
         String[][] out;
         out = Aggregation(merged, 1);
         return out;
