@@ -21,11 +21,10 @@ import java.util.concurrent.Future;
 
 /**
  *
- * @author asus
+ * @author L.Badr
  */
 public class MultiThreaded {
     int col=0;
-    SingleThreaded grps=new SingleThreaded();
     public  class Groupby_Thread implements Callable<String[][]> {
         // Create  threads to group by sorting the data
         private String[][] matrix;
@@ -306,7 +305,7 @@ public class MultiThreaded {
         Export_csv save = new Export_csv();
         save.export_csv(arr2,"result.csv");
        
-        //executor.shutdown();
+        executor.shutdown();
         return sol;
         }
 }

@@ -54,9 +54,7 @@ public class GroupbySortSpark {
         JavaRDD<Map.Entry<Integer , Integer>> merged = hashtable.coalesce(1).mapPartitions(x -> mergeIntermediaryOutputs(x).iterator());
         JavaRDD<String> Output = merged.map(obj -> obj.getKey() + ";" + Integer.toString(obj.getValue()));
         Output.cache();
-        //List<String> matrix=Output.collect();
-        
- 
+        //Output.collect()
        Map<Integer , Integer> arr2 = Collections.synchronizedMap(new LinkedHashMap<Integer , Integer>());
         
         for (String line:Output.collect()) {
