@@ -305,7 +305,7 @@ public class MultiThreaded {
         Export_csv save = new Export_csv();
         save.export_csv(arr2,"result.csv");
        
-        //executor.shutdown();
+        executor.shutdown();
         return sol;
         }
 }

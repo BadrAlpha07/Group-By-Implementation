@@ -201,8 +201,8 @@ public class SingleThreaded {
          //matrix=Selection_Sort_matrix(matrix,col); // Selection sort algorithm
          Map<Integer , Integer> arr2 = Collections.synchronizedMap(new LinkedHashMap<Integer , Integer>());
          arr2=Aggregation(matrix,col);
-         //Export_csv save = new Export_csv();
-         //save.export_csv(arr2,"result.csv");
+         Export_csv save = new Export_csv();
+         save.export_csv(arr2,"result.csv");
          return arr2;
      }
 }
