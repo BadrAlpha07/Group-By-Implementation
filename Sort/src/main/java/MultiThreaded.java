@@ -21,7 +21,7 @@ import java.util.concurrent.Future;
 
 /**
  *
- * @author asus
+ * @author L.Badr
  */
 public class MultiThreaded {
     int col=0;
