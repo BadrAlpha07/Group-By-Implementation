@@ -16,14 +16,21 @@ The architecture inside the modules are quite similar but are differ in several 
 
 ## Implementation details
 ### Single Threaded
+It is important to understand the concepts involved in the single-threaded version, because both multi-processors and spark implementation borrow from it. The algorithm works in two passes. One is to fill a hashtable with the aggregated groups values. The other one simply outputs the groups. From this, one can see that the most interesting part is the hashtable, and how to insert, retrieve and update values. See the report to get more details about the hashtable implementation.
+
+### Multithreaded Implementation
+*We implemented three versions of the multiprocessor algorithm. We only kept the best performing option for the measures. *
+
+Our implementation of the partitioning hash table starts by creating a new hash-table for each thread. There is no need for a merge function. Instead, each thread will only input in its own hashtable the records that belong to its partition. The partition is determined by a modular hashing on the group, by the number of threads. This way, no two records belonging to the same groups can be managed by different threads. 
+Because of this careful partitioning, there is no need to merge outputs. Each thread can start outputting groups as soon as it is finished.
+
 ### Spark Implementation
 The Spark implementation uses only function of the main Spark module and not the SparkSQL module.
 In fact, apart from the functions used to parse the input files we only used two functions :
 - **mapPartitions** which splits the input for the different workers and perform an operation on each partition. 
 - **reduce** that take the results of **mapPartitions** and group 2 by 2 the output until we obtain a final result.
 
-All of the others operations are handmade, especially the implementation of the custom hashtable and the operations on the hashtables (merge records, merge tables, collision management, restructuration if table is full).
-Like the two others implementations, this algorithm relies heavily of our custom implementation of the HashTable and so are the performances.
+All of the others operations are handmade and are based on what was implemented for the singlethreaded and multithreaded algorithms, though it has some small differences that are not supposed to influence performance (e.g. we hash on String rather than Integer).
 
 ## Results
 
@@ -39,7 +46,7 @@ The folders can be found there:
  Results format are : **file**;**timeSingleThreaded**;**timeMultiThreaded**;**timeSpark**
  
  ### Plots
-
+Below you can find the results of the tests for the two folders (**size** and **group**).
  ![](img/size.png)
  ![](img/group.png)
 
