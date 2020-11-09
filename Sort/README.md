@@ -6,9 +6,9 @@ The user can choose at first the CSV file, secondly the column name that contain
 We have done 3 implemtentations :The main code used to generate the results files is [Main_Test.java](src/main/java/Main_Test.java).
 
  - Single-Threaded Group By Sort, that can be found [there](src/main/java/SingleThreaded.java).
- - Multi-Threaded Group By Sort, that can be found  [there](Sort/src/main/java/MultiThreaded.java).
- - Spark distributed Group By Sort, that can be found [there](Sort/src/main/java/GroupbySortSpark.java).
-The class [MainSortGroup.java] used to implement the interface [there](Sort/src/main/java/MainSortGroup.java).
+ - Multi-Threaded Group By Sort, that can be found  [there](src/main/java/MultiThreaded.java).
+ - Spark distributed Group By Sort, that can be found [there](src/main/java/GroupbySortSpark.java).
+The class [MainSortGroup.java] used to implement the interface [there](src/main/java/MainSortGroup.java).
 
 
 ## Implementation details
