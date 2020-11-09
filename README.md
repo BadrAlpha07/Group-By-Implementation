@@ -1,17 +1,6 @@
 # Group-By Project
-For everyone : chose a way to read a csv and everybody sticks to it so we can all compare performances.
+We divided the work into three groups, each group had to make a particular algorithm and the corresponding single-threaded, multi-threaded and Spark implementations.
 
-## Nested Loops
-## Sorting
-## Hashing
-### Literature review
-Put articles with a brief explanation of what it brings to our project.
-
-### Single-Threaded implementation
-
-
-### Multi-Threaded implementation
-#### Partition Hashing
-#### Concurrent Hashing
-
-### Spark implementation
+ - [Nested Loops Group By](nested_loops)
+ - [Sort Group By](Sort)
+ - [Hash Group By](Hash)
