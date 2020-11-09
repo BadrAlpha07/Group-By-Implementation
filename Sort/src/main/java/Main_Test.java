@@ -25,7 +25,7 @@ public class Main_Test {
     public static void main(String[] args) throws FileNotFoundException, InterruptedException, ExecutionException {
         
         
-        final File folder = new File("C:\\Users\\hp\\Desktop\\GroupySor\\group"); //Path
+        final File folder = new File("C:\\home"); //Path
         
         MultiThreaded mutli= new MultiThreaded();
         SingleThreaded single= new SingleThreaded();
@@ -33,23 +33,22 @@ public class Main_Test {
         conf.setAppName("Application_name").setMaster("local[*]");
         JavaSparkContext sc = null;
         sc = new JavaSparkContext(conf);
-        int threadPoolSize=10;
-        ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);
+        int threadPoolSize=4;
 	sc.setLogLevel("WARN");
         
         GroupbySortSpark spark= new GroupbySortSpark();
         //JavaSparkContext sc = null;
         
-        WriterFile result_spark = new WriterFile("result_Spark.csv");//result_spark_size_selection.csv");
+        WriterFile result_spark = new WriterFile("result_Spark.csv");
         WriterFile result_Multi = new WriterFile("result_Multi.csv");
         WriterFile result_Single = new WriterFile("result_Single.csv");
-        
-        float[] temps_spark=new float[100]; 
+        int n_test = 100; // number of test 
+        float[] temps_spark=new float[n_test];
         for (final File fileEntry : folder.listFiles()){
             String path= fileEntry.getPath();
             System.out.println("Spark"+path);
         
-        for (int i=0; i<100;i++){ 
+        for (int i=0; i<n_test;i++){ 
             System.out.println(i);
         long t1 = System.nanoTime();
         spark.Spark_grouby(path,4,1,sc);
@@ -58,29 +57,29 @@ public class Main_Test {
         temps_spark[i]=timing;
       }
         float cal=0;
-        for(int i=0;i<temps_spark.length;i++){
+        for(int i=0;i<n_test;i++){
             cal=cal+temps_spark[i];
         }
         path = path.replace("\\", "/");
         String[] splittedFileName = path.split("/");
         String Name = splittedFileName[splittedFileName.length-1];
         
-        float sum=cal/temps_spark.length;
+        float sum=cal/n_test;
         result_spark.writeLine(Name+";"+Float.toString(sum));
       }
         result_spark.closeFile();
 
       //____________________________________________________________________________
-      float[] temps_Multi=new float[100]; 
+      float[] temps_Multi=new float[n_test]; 
         for (final File fileEntry : folder.listFiles()){
             String path= fileEntry.getPath();
             System.out.println("Multi"+path);
         Read_CSV read = new Read_CSV();
         String [][] matrix=read.read_csv(path,1);
-        for (int i=0; i<100;i++){ 
+        for (int i=0; i<n_test;i++){ 
             
         long t3 = System.nanoTime();
-        mutli.GroupingMulti(matrix,4,1);
+        mutli.GroupingMulti(matrix,threadPoolSize,1);
         long t4 = System.nanoTime();
         long timing_2 = (t4-t3)/(1000000);
         temps_Multi[i]=timing_2;
@@ -95,17 +94,17 @@ public class Main_Test {
         String[] splittedFileName = path.split("/");
         String Name = splittedFileName[splittedFileName.length-1];
         
-        float sum=cal/temps_Multi.length;
+        float sum=cal/n_test;
         result_Multi.writeLine(Name+";"+Float.toString(sum));
       }
         result_Multi.closeFile();
         //_________________________________________________________________________
-        float[] temps_Single=new float[100]; 
+        float[] temps_Single=new float[n_test]; 
         for (final File fileEntry : folder.listFiles()){
             String path= fileEntry.getPath();
             System.out.println("Single"+path);
         
-        for (int i=0; i<100;i++){ 
+        for (int i=0; i<n_test;i++){ 
         Read_CSV read = new Read_CSV();
         String [][] matrix=read.read_csv(path,1);
         long t5 = System.nanoTime();
@@ -113,11 +112,10 @@ public class Main_Test {
         long t6 = System.nanoTime();
         long timing_3 = (t6-t5)/(1000000);
         temps_Single[i]=timing_3;
-        //System.out.println(timing_3);
         
       }
         float cal=0;
-        for(int i=0;i<temps_Single.length;i++){
+        for(int i=0;i<n_test;i++){
             cal=cal+temps_Single[i];
         }
         
@@ -125,7 +123,7 @@ public class Main_Test {
        String[] splittedFileName = path.split("/");
        String Name = splittedFileName[splittedFileName.length-1];
        
-        float sum=cal/temps_Single.length;
+        float sum=cal/n_test;
         result_Single.writeLine(Name+";"+Float.toString(sum));
       }
         result_Single.closeFile();
